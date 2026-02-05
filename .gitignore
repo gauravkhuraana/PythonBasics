@@ -1,0 +1,55 @@
+# ============================================================
+# .gitignore - Files that should NEVER be committed to Git
+# ============================================================
+# This file tells Git which files/folders to ignore.
+# This is crucial for security and keeping your repo clean!
+# ============================================================
+
+# ------------------------------------------------------------
+# SECRETS - Most important! Never commit API keys!
+# ------------------------------------------------------------
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# ------------------------------------------------------------
+# VIRTUAL ENVIRONMENT - Each developer creates their own
+# ------------------------------------------------------------
+venv/
+.venv/
+env/
+ENV/
+
+# ------------------------------------------------------------
+# PYTHON CACHE - Auto-generated, not needed in repo
+# ------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+*.pyo
+
+# ------------------------------------------------------------
+# IDE SETTINGS - Personal preferences, not project files
+# ------------------------------------------------------------
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ------------------------------------------------------------
+# OS FILES - System-generated junk
+# ------------------------------------------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ------------------------------------------------------------
+# BUILD/DIST - Generated output files
+# ------------------------------------------------------------
+build/
+dist/
+*.egg-info/

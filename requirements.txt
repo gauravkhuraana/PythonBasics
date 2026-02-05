@@ -1,0 +1,11 @@
+# ============================================================
+# Python Dependencies for Azure OpenAI Session
+# ============================================================
+# Install with: pip install -r requirements.txt
+# ============================================================
+
+# OpenAI Python SDK - Works with both OpenAI and Azure OpenAI
+openai>=1.0.0
+
+# Load environment variables from .env file
+python-dotenv>=1.0.0
