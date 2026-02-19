@@ -53,3 +53,8 @@ desktop.ini
 build/
 dist/
 *.egg-info/
+
+# ------------------------------------------------------------
+# LAB SOLUTIONS - Instructor only, not for students
+# ------------------------------------------------------------
+solutions/
