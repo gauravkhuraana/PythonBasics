@@ -26,6 +26,7 @@ Run this file: python 03_azure_openai_simple.py
 import os
 from dotenv import load_dotenv
 from openai import AzureOpenAI
+from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 
 # ============================================================
 # STEP 1: Load environment variables
@@ -33,7 +34,6 @@ from openai import AzureOpenAI
 load_dotenv()
 
 endpoint = os.getenv("AZURE_OPENAI_ENDPOINT")
-api_key = os.getenv("AZURE_OPENAI_API_KEY")
 deployment = os.getenv("AZURE_OPENAI_DEPLOYMENT_NAME")
 
 print("=" * 60)
@@ -41,7 +41,7 @@ print("AZURE OPENAI: Your First API Call")
 print("=" * 60)
 
 # Quick check before proceeding
-if not all([endpoint, api_key, deployment]):
+if not all([endpoint, deployment]):
     print("\n❌ ERROR: Missing credentials!")
     print("   Please run 02_environment_setup.py first")
     print("   and make sure your .env file is configured.")
@@ -60,17 +60,28 @@ print("-" * 40)
 print("""
 📝 CODE EXPLANATION:
 
+   # Using Azure AD token-based auth (no API key needed!)
+   credential = DefaultAzureCredential()
+   token_provider = get_bearer_token_provider(
+       credential, "https://cognitiveservices.azure.com/.default"
+   )
    client = AzureOpenAI(
-       azure_endpoint=endpoint,    # Your Azure resource URL
-       api_key=api_key,            # Your secret API key
-       api_version="2024-10-21"    # API version to use
+       azure_endpoint=endpoint,
+       azure_ad_token_provider=token_provider,
+       api_version="2024-12-01-preview"
    )
 """)
 
+# Use Azure AD authentication (key-based auth is disabled by org policy)
+credential = DefaultAzureCredential()
+token_provider = get_bearer_token_provider(
+    credential, "https://cognitiveservices.azure.com/.default"
+)
+
 client = AzureOpenAI(
     azure_endpoint=endpoint,
-    api_key=api_key,
-    api_version="2024-10-21"
+    azure_ad_token_provider=token_provider,
+    api_version="2024-12-01-preview"
 )
 
 print("✅ Client created!")
@@ -113,8 +124,7 @@ try:
                 "content": prompt
             }
         ],
-        max_tokens=200,
-        temperature=0.7  # A bit creative but still focused
+        max_completion_tokens=200
     )
     
     # ============================================================

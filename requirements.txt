@@ -9,3 +9,6 @@ openai>=1.0.0
 
 # Load environment variables from .env file
 python-dotenv>=1.0.0
+
+# Azure AD authentication (token-based, no API key needed)
+azure-identity>=1.15.0
