@@ -25,14 +25,21 @@ Run this file: python 04_azure_openai_chat.py
 import os
 from dotenv import load_dotenv
 from openai import AzureOpenAI
+from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 
 # Load credentials and create client
 load_dotenv()
 
+# Use Azure AD authentication (key-based auth is disabled by org policy)
+credential = DefaultAzureCredential()
+token_provider = get_bearer_token_provider(
+    credential, "https://cognitiveservices.azure.com/.default"
+)
+
 client = AzureOpenAI(
     azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
-    api_key=os.getenv("AZURE_OPENAI_API_KEY"),
-    api_version="2024-10-21"
+    azure_ad_token_provider=token_provider,
+    api_version="2024-12-01-preview"
 )
 
 deployment = os.getenv("AZURE_OPENAI_DEPLOYMENT_NAME")
@@ -102,8 +109,7 @@ print("\n⏳ Sending request with system prompt...")
 response = client.chat.completions.create(
     model=deployment,
     messages=messages,
-    max_tokens=200,
-    temperature=0.7
+    max_completion_tokens=200
 )
 
 print("\n🤖 AI Response (notice the Meeting Assistant personality):")
@@ -143,7 +149,7 @@ print(f"👤 User: {conversation[1]['content']}")
 response1 = client.chat.completions.create(
     model=deployment,
     messages=conversation,
-    max_tokens=150
+    max_completion_tokens=150
 )
 assistant_msg1 = response1.choices[0].message.content
 print(f"\n🤖 Assistant: {assistant_msg1}")
@@ -158,7 +164,7 @@ print(f"\n👤 User: {conversation[3]['content']}")
 response2 = client.chat.completions.create(
     model=deployment,
     messages=conversation,
-    max_tokens=200
+    max_completion_tokens=200
 )
 assistant_msg2 = response2.choices[0].message.content
 print(f"\n🤖 Assistant: {assistant_msg2}")
@@ -173,7 +179,7 @@ print(f"\n👤 User: {conversation[5]['content']}")
 response3 = client.chat.completions.create(
     model=deployment,
     messages=conversation,
-    max_tokens=300
+    max_completion_tokens=300
 )
 print(f"\n🤖 Assistant: {response3.choices[0].message.content}")
 print("-" * 40)
@@ -218,7 +224,7 @@ print("\n⏳ Asking AI to summarize and extract action items...")
 response = client.chat.completions.create(
     model=deployment,
     messages=summary_request,
-    max_tokens=300
+    max_completion_tokens=300
 )
 
 print("\n🤖 AI Summary & Action Items:")
@@ -267,6 +273,6 @@ print("=" * 60)
 #         {"role": "system", "content": "Summarize meeting notes and extract action items."},
 #         {"role": "user", "content": your_notes}
 #     ],
-#     max_tokens=300
+#     max_completion_tokens=300
 # )
 # print(response.choices[0].message.content)

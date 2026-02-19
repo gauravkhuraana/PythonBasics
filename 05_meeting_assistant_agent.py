@@ -14,24 +14,30 @@ In this file, you'll build a Meeting Assistant AGENT that:
 
 AGENT vs CHAT COMPLETION:
   - Chat: You manage message history yourself
-  - Agent: Memory is built-in via "threads"!
+  - Agent: Memory is built-in — the class handles it for you!
 
 Run this file: python 05_meeting_assistant_agent.py
 ================================================================
 """
 
 import os
-import time
 from dotenv import load_dotenv
 from openai import AzureOpenAI
+from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 
 # Load credentials
 load_dotenv()
 
-# Create Azure OpenAI client for Assistants API
+# Use Azure AD authentication (key-based auth is disabled by org policy)
+credential = DefaultAzureCredential()
+token_provider = get_bearer_token_provider(
+    credential, "https://cognitiveservices.azure.com/.default"
+)
+
+# Create Azure OpenAI client
 client = AzureOpenAI(
-    api_key=os.getenv("AZURE_OPENAI_API_KEY"),
-    api_version="2024-08-01-preview",  # Latest stable version for Assistants
+    azure_ad_token_provider=token_provider,
+    api_version="2024-12-01-preview",
     azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT")
 )
 
@@ -43,7 +49,7 @@ print("=" * 60)
 
 
 # ============================================================
-# STEP 1: CREATE THE AGENT (Like hiring a specialist)
+# STEP 1: DEFINE THE AGENT CLASS (Like hiring a specialist)
 # ============================================================
 print("\n" + "-" * 40)
 print("STEP 1: Creating the Meeting Assistant Agent")
@@ -52,25 +58,30 @@ print("-" * 40)
 print("""
 📝 AGENT CONCEPTS:
 
-   🤖 Agent (Assistant)
-      • Has a name and personality
+   🤖 Agent (MeetingAssistant class)
+      • Has a name and personality (system prompt)
       • Follows instructions you define
-      • Persists until you delete it
+      • Remembers your entire conversation automatically
    
-   💬 Thread
-      • A conversation session
+   💬 Conversation History (managed internally)
       • Stores all messages automatically
       • YOU don't manage history anymore!
    
-   ▶️  Run
-      • When the agent processes and responds
-      • You create a run, wait for it, get the response
+   ▶️  chat() method
+      • Send a message, get a response
+      • History is tracked behind the scenes
 """)
 
-# Create our Meeting Assistant with detailed instructions
-assistant = client.beta.assistants.create(
-    name="Meeting Assistant",
-    instructions="""You are a professional Meeting Assistant called "Meeting Assistant".
+
+class MeetingAssistant:
+    """An AI Meeting Assistant agent with built-in conversation memory."""
+    
+    def __init__(self, client, model, name="Meeting Assistant"):
+        self.client = client
+        self.model = model
+        self.name = name
+        # The system prompt gives the agent its personality
+        self.system_prompt = """You are a professional Meeting Assistant called "Meeting Assistant".
 
 YOUR RESPONSIBILITIES:
 1. Help prepare meeting agendas
@@ -86,79 +97,51 @@ YOUR STYLE:
 - Always ask if there's anything else you can help with
 
 REMEMBER: You maintain context across our entire conversation. 
-Reference previous messages to show you remember what we discussed.""",
-    model=deployment
-)
+Reference previous messages to show you remember what we discussed."""
 
-print(f"\n✅ Created Agent: {assistant.name}")
-print(f"   ID: {assistant.id}")
-
-
-# ============================================================
-# STEP 2: CREATE A THREAD (Conversation with memory)
-# ============================================================
-print("\n" + "-" * 40)
-print("STEP 2: Creating Conversation Thread")
-print("-" * 40)
-
-thread = client.beta.threads.create()
-
-print(f"\n✅ Created Thread (conversation)")
-print(f"   ID: {thread.id}")
-print("   This thread will remember everything we discuss!")
-
-
-# ============================================================
-# STEP 3: HELPER FUNCTION - Chat with Agent
-# ============================================================
-def chat(user_message):
-    """Send a message to the agent and get the response."""
+        # Conversation history — managed automatically!
+        self.history = [
+            {"role": "system", "content": self.system_prompt}
+        ]
     
-    # Add user message to the thread
-    client.beta.threads.messages.create(
-        thread_id=thread.id,
-        role="user",
-        content=user_message
-    )
-    
-    # Create a run (agent processes the thread)
-    run = client.beta.threads.runs.create(
-        thread_id=thread.id,
-        assistant_id=assistant.id
-    )
-    
-    # Wait for completion (poll every 1 second)
-    while run.status not in ["completed", "cancelled", "expired", "failed"]:
-        time.sleep(1)
-        run = client.beta.threads.runs.retrieve(
-            thread_id=thread.id,
-            run_id=run.id
-        )
-    
-    # Check for failure
-    if run.status == "failed":
-        return f"Error: Run failed - {run.last_error}"
-    
-    if run.status == "completed":
-        # Get the latest message (agent's response)
-        messages = client.beta.threads.messages.list(thread_id=thread.id)
+    def chat(self, user_message):
+        """Send a message and get a response. History is tracked automatically."""
+        # Add user message to history
+        self.history.append({"role": "user", "content": user_message})
         
-        # Extract text from the first (most recent) assistant message
-        for msg in messages.data:
-            if msg.role == "assistant":
-                for content_block in msg.content:
-                    if content_block.type == "text":
-                        return content_block.text.value
-        return "Error: No response found"
-    else:
-        return f"Error: Run ended with status {run.status}"
+        # Call Azure OpenAI with FULL history
+        response = self.client.chat.completions.create(
+            model=self.model,
+            messages=self.history,
+            max_completion_tokens=300
+        )
+        
+        # Extract assistant reply
+        assistant_reply = response.choices[0].message.content
+        
+        # Save assistant reply to history (so the agent remembers!)
+        self.history.append({"role": "assistant", "content": assistant_reply})
+        
+        return assistant_reply
+    
+    @property
+    def message_count(self):
+        """How many messages in the conversation (excluding system prompt)."""
+        return len(self.history) - 1
+
+
+# Create our Meeting Assistant agent
+agent = MeetingAssistant(client, deployment)
+print(f"\n✅ Created Agent: {agent.name}")
+print(f"   Model: {agent.model}")
+print("   Conversation memory is managed automatically!")
 
 
 # ============================================================
-# STEP 4: HAVE A CONVERSATION (The "Wow" Moment!)
+# STEP 2: HAVE A CONVERSATION (The "Wow" Moment!)
 # ============================================================
 print("\n" + "-" * 40)
-print("STEP 4: Conversation with Meeting Assistant")
+print("STEP 2: Conversation with Meeting Assistant")
 print("-" * 40)
 
 print("\n🌟 Watch how the agent REMEMBERS context automatically!\n")
@@ -167,31 +150,34 @@ print("=" * 60)
 # Message 1: Introduction
 print("\n👤 You: Hi! I need help preparing for a team standup meeting tomorrow.")
 print("   (The meeting is at 10 AM with 4 team members)")
-response = chat("Hi! I need help preparing for a team standup meeting tomorrow. The meeting is at 10 AM with 4 team members.")
+response = agent.chat("Hi! I need help preparing for a team standup meeting tomorrow. The meeting is at 10 AM with 4 team members.")
 print(f"\n🤖 Meeting Assistant:\n{response}")
 
 print("\n" + "-" * 40)
 
 # Message 2: Add more context (agent should remember previous info!)
 print("\n👤 You: The team is working on a mobile app launch. We're 2 weeks from release.")
-response = chat("The team is working on a mobile app launch. We're 2 weeks from release.")
+response = agent.chat("The team is working on a mobile app launch. We're 2 weeks from release.")
 print(f"\n🤖 Meeting Assistant:\n{response}")
 
 print("\n" + "-" * 40)
 
 # Message 3: Ask for agenda (agent should use ALL context!)
 print("\n👤 You: Based on what I told you, create a 15-minute agenda for me.")
-response = chat("Based on what I told you, create a 15-minute agenda for me.")
+response = agent.chat("Based on what I told you, create a 15-minute agenda for me.")
 print(f"\n🤖 Meeting Assistant:\n{response}")
 
 print("\n" + "-" * 40)
 
 # Message 4: Reference earlier context
 print("\n👤 You: What did I say about the timeline?")
-response = chat("What did I say about the timeline?")
+response = agent.chat("What did I say about the timeline?")
 print(f"\n🤖 Meeting Assistant:\n{response}")
 
 print("\n" + "=" * 60)
+
+print(f"\n📊 Conversation length: {agent.message_count} messages")
+print("   The agent remembered everything without you resending history!")
 
 
 # ============================================================
@@ -215,8 +201,8 @@ YOU DIDN'T:
    ❌ Remind the AI what you said before
 
 THIS IS THE POWER OF AGENTS:
-   The Thread stores everything automatically!
-   The Agent remembers and uses all context!
+   The MeetingAssistant class handles memory for you!
+   Just call agent.chat() and it remembers everything!
 """)
 
 
@@ -239,21 +225,8 @@ Ideas to try:
 
 # Uncomment to try:
 # print("\n👤 You: [Your message here]")
-# response = chat("Your message here - try asking about the agenda!")
+# response = agent.chat("Your message here - try asking about the agenda!")
 # print(f"\n🤖 Meeting Assistant:\n{response}")
-
-
-# ============================================================
-# CLEANUP (Optional)
-# ============================================================
-# In a real app, you might want to keep the assistant
-# For this demo, let's clean up
-
-try:
-    client.beta.assistants.delete(assistant.id)
-    print("\n🧹 Cleanup: Agent deleted (demo complete)")
-except:
-    pass
 
 
 # ============================================================
