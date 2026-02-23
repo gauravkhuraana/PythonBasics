@@ -2,7 +2,7 @@
 
 ## How to Use This File
 
-This document provides slide-by-slide instructions for creating a PowerPoint presentation for the "Python + Azure OpenAI: Building an AI Meeting Assistant" training session. Each slide entry includes the title, layout suggestion, bullet point content, speaker notes with timing and demo cues, and suggested visuals.
+This document provides slide-by-slide instructions for creating a PowerPoint presentation for the "Python + Azure OpenAI: Create a Personalised Assistant" training session. Each slide entry includes the title, layout suggestion, bullet point content, speaker notes with timing and demo cues, and suggested visuals.
 
 ---
 
@@ -10,7 +10,7 @@ This document provides slide-by-slide instructions for creating a PowerPoint pre
 
 | Property | Value |
 |----------|-------|
-| **Title** | Python + Azure OpenAI: Building an AI Meeting Assistant |
+| **Title** | Python + Azure OpenAI: Create a Personalised Assistant |
 | **Audience** | Complete Beginners (no coding experience required) |
 | **Duration** | 1 hour (55 minutes of content + 5 minutes buffer) |
 | **Format** | Hands-on lab with live coding demos |
@@ -46,7 +46,7 @@ This document provides slide-by-slide instructions for creating a PowerPoint pre
 **Layout**: Title Slide (centered, large text)
 
 **Content**:
-- Title: **Python + Azure OpenAI: Building an AI Meeting Assistant**
+- Title: **Python + Azure OpenAI: Create a Personalised Assistant**
 - Subtitle: 1-Hour Hands-On Session | Beginner Level | No Coding Experience Required
 - Presenter name: [Your Name]
 - Date: [Session Date]
@@ -1003,7 +1003,7 @@ Open floor for questions. I have all five files ready to re-demo any concept. If
 
 **Content**:
 - **Thank You for Attending!**
-- Python + Azure OpenAI: Building an AI Meeting Assistant
+- Python + Azure OpenAI: Create a Personalised Assistant
 - Session materials: [link/path to project folder]
 - Contact: [presenter email placeholder]
 - Additional resources:
