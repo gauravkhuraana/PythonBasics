@@ -1,20 +1,21 @@
 """
 ================================================================
-01_python_fundamentals.py
-PYTHON BASICS: Variables, Types, and Collections
+03_python_essentials.py — Video 3
+PYTHON ESSENTIALS FOR AI IN 15 MINUTES
 ================================================================
 
-🎯 LAB GOAL REMINDER:
-By the end of this session, you'll build an AI Meeting Assistant!
-First, let's learn the Python building blocks you'll need.
+🎯 GOAL:
+   Cover just enough Python to talk to an AI: variables,
+   types, lists, dicts, loops, and the message-list pattern
+   you'll re-use in every later video.
 
 This file covers:
   ✅ Variables and data types (str, int, float, bool)
-  ✅ Lists - ordered collections
-  ✅ Dictionaries - key-value pairs
-  ✅ How these map to Azure OpenAI concepts
+  ✅ Lists  — ordered collections  [ ]
+  ✅ Dicts  — key-value pairs      { }
+  ✅ How these map to LLM message lists
 
-Run this file: python 01_python_fundamentals.py
+Run this file:  python 03_python_essentials.py
 ================================================================
 """
 
@@ -27,8 +28,8 @@ print("=" * 60)
 # ============================================================
 # In AI, strings are used for: prompts, responses, instructions
 
-prompt = "Summarize my meeting notes"
-assistant_name = "Meeting Assistant"
+prompt = "Summarize my test run results"
+assistant_name = "QA Assistant"
 
 print(f"\n📝 STRINGS (str) - Text data")
 print(f"   prompt = \"{prompt}\"")
@@ -92,7 +93,7 @@ messages = []
 
 # Add items with .append()
 messages.append("Hello!")
-messages.append("How can I help with your meeting?")
+messages.append("How can I help with your test run?")
 messages.append("Let me summarize that for you.")
 
 print(f"\n📋 LISTS - Ordered collections using [ ]")
@@ -123,7 +124,7 @@ print("=" * 60)
 # A single message as a dictionary
 user_message = {
     "role": "user",
-    "content": "Please summarize my meeting notes"
+    "content": "Please summarize my test run results"
 }
 
 print(f"\n📖 DICTIONARIES - Key-value pairs using {{ }}")
@@ -145,13 +146,13 @@ print("=" * 60)
 # ============================================================
 
 conversation = [
-    {"role": "system", "content": "You are a helpful meeting assistant."},
-    {"role": "user", "content": "Here are my meeting notes: discussed Q1 goals."},
-    {"role": "assistant", "content": "I see you discussed Q1 goals. Would you like me to extract action items?"},
+    {"role": "system", "content": "You are a helpful QA assistant."},
+    {"role": "user", "content": "Here are my test results: 28 passed, 5 failed."},
+    {"role": "assistant", "content": "Got it — want a triage summary of the 5 failures?"},
     {"role": "user", "content": "Yes please!"}
 ]
 
-print(f"\n🌟 AZURE OPENAI MESSAGE FORMAT:")
+print(f"\n🌟 LLM CHAT MESSAGE FORMAT (works for both local & cloud):")
 print(f"   A LIST of DICTIONARIES with 'role' and 'content'\n")
 
 for msg in conversation:
@@ -180,7 +181,7 @@ print("""
    5. list           → Ordered collection using [ ]
    6. dict           → Key-value pairs using { }
    
-   🌟 MOST IMPORTANT for Azure OpenAI:
+   🌟 MOST IMPORTANT for talking to any LLM:
    Messages are a LIST of DICTIONARIES:
    [
        {"role": "system", "content": "..."},
@@ -191,7 +192,7 @@ print("""
 
 
 print("=" * 60)
-print("✅ COMPLETE! Next: python 02_environment_setup.py")
+print("✅ COMPLETE! Next: python 04_project_setup.py")
 print("=" * 60)
 
 
@@ -200,7 +201,7 @@ print("=" * 60)
 # ============================================================
 # Uncomment and modify the code below to practice:
 
-# # Create your own meeting-related message
+# # Create your own QA-related message
 # my_message = {
 #     "role": "user",
 #     "content": "YOUR MESSAGE HERE"
@@ -209,7 +210,7 @@ print("=" * 60)
 
 # # Add it to a conversation list
 # my_conversation = [
-#     {"role": "system", "content": "You are a meeting assistant."},
+#     {"role": "system", "content": "You are a QA assistant."},
 #     my_message
 # ]
 # print(f"My conversation: {my_conversation}")

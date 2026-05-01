@@ -1,278 +1,162 @@
 """
 ================================================================
-04_azure_openai_chat.py
-AZURE OPENAI: Chat with Message History
+07_chat_with_memory.py
+MULTI-TURN CHAT WITH MEMORY (against your local LLM)
 ================================================================
 
-🎯 LAB GOAL REMINDER:
-Building toward your AI Meeting Assistant!
-Now let's add system prompts and conversation history.
+🎯 GOAL:
+   Hold a conversation where the model REMEMBERS what was
+   said earlier — using a system prompt + a growing message list.
 
 This file covers:
-  ✅ System prompts - Setting AI behavior/personality
-  ✅ Multi-turn conversations - Chat history
-  ✅ Message roles: system, user, assistant
-  ✅ Meeting-themed examples
+  ✅ The three roles: system / user / assistant
+  ✅ Why the LLM has no memory between API calls
+  ✅ How YOU give it memory by sending the full history
+  ✅ A practical "summarize my notes" example
 
 Prerequisites:
-  - Completed 03_azure_openai_simple.py
-  - Credentials configured in .env
+  - LM Studio is running with a model loaded (Video 5)
+  - .env has LOCAL_LLM_BASE_URL and LOCAL_LLM_MODEL
 
-Run this file: python 04_azure_openai_chat.py
+Run this file:  python 07_chat_with_memory.py
 ================================================================
 """
 
 import os
 from dotenv import load_dotenv
-from openai import AzureOpenAI
-from azure.identity import DefaultAzureCredential, get_bearer_token_provider
+from openai import OpenAI
 
-# Load credentials and create client
 load_dotenv()
 
-# Use Azure AD authentication (key-based auth is disabled by org policy)
-credential = DefaultAzureCredential()
-token_provider = get_bearer_token_provider(
-    credential, "https://cognitiveservices.azure.com/.default"
+client = OpenAI(
+    base_url=os.getenv("LOCAL_LLM_BASE_URL", "http://localhost:1234/v1"),
+    api_key="lm-studio",
 )
-
-client = AzureOpenAI(
-    azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
-    azure_ad_token_provider=token_provider,
-    api_version="2024-12-01-preview"
-)
-
-deployment = os.getenv("AZURE_OPENAI_DEPLOYMENT_NAME")
+model = os.getenv("LOCAL_LLM_MODEL", "local-model")
 
 print("=" * 60)
-print("AZURE OPENAI: Chat with Message History")
+print("MULTI-TURN CHAT WITH MEMORY")
 print("=" * 60)
 
 
 # ============================================================
-# PART 1: UNDERSTANDING MESSAGE ROLES
+# PART 1: The three message roles
 # ============================================================
-print("\n" + "-" * 40)
-print("PART 1: Message Roles Explained")
-print("-" * 40)
-
 print("""
-📝 THREE ROLES IN AZURE OPENAI CHAT:
+📝 THREE ROLES IN A CHAT MESSAGE LIST:
 
-   1. "system" - Instructions for the AI
-      • Sets personality, rules, and behavior
-      • Only seen by the AI, not the user
-      • Example: "You are a helpful meeting assistant."
-   
-   2. "user" - What the human says
-      • Your questions and requests
-      • Example: "Summarize these meeting notes."
-   
-   3. "assistant" - What the AI responds
-      • The AI's previous answers
-      • Used to maintain conversation history
-      • Example: "Here's the summary: ..."
+   1. "system"    — Instructions for the model (personality,
+                    rules, output format). Sent once at the start.
+
+   2. "user"      — What the human says.
+
+   3. "assistant" — What the model said previously. Including
+                    these is how you give the model "memory."
 """)
 
 
 # ============================================================
-# PART 2: SYSTEM PROMPT - Setting AI Behavior
+# PART 2: System prompt → personality
 # ============================================================
-print("-" * 40)
-print("PART 2: System Prompt Example")
-print("-" * 40)
+system_prompt = """You are a friendly Python + AI tutor.
+- Answer in 3-4 short bullets unless asked for more.
+- Use plain English.
+- Always end with one practical "try it now" suggestion."""
 
-# A good system prompt for our Meeting Assistant
-system_prompt = """You are a professional Meeting Assistant AI.
-
-Your responsibilities:
-- Help create meeting agendas
-- Summarize meeting notes concisely
-- Extract action items and assign owners
-- Suggest follow-up topics
-
-Your style:
-- Be concise and use bullet points
-- Stay professional but friendly
-- Always ask if the user needs anything else"""
-
-print(f"\n📋 System Prompt:\n{system_prompt}")
-
-# Make a request with the system prompt
 messages = [
     {"role": "system", "content": system_prompt},
-    {"role": "user", "content": "Hi! Can you help me prepare for my team meeting?"}
+    {"role": "user", "content": "Hi! What's a list comprehension in Python?"},
 ]
 
-print("\n⏳ Sending request with system prompt...")
-
-response = client.chat.completions.create(
-    model=deployment,
-    messages=messages,
-    max_completion_tokens=200
+print("⏳ First turn...\n")
+r1 = client.chat.completions.create(
+    model=model, messages=messages, max_tokens=250, temperature=0.4
 )
-
-print("\n🤖 AI Response (notice the Meeting Assistant personality):")
-print("-" * 40)
-print(response.choices[0].message.content)
-print("-" * 40)
+reply1 = r1.choices[0].message.content
+print(f"🤖 Tutor:\n{reply1}\n")
 
 
 # ============================================================
-# PART 3: MULTI-TURN CONVERSATION
+# PART 3: Multi-turn — append, then resend EVERYTHING
 # ============================================================
-print("\n" + "-" * 40)
-print("PART 3: Multi-Turn Conversation")
-print("-" * 40)
+# The model is stateless. To make it "remember", we append its
+# previous reply to our list and send the whole thing back.
+messages.append({"role": "assistant", "content": reply1})
+messages.append({"role": "user", "content": "Cool. Show me one that filters even numbers."})
 
-print("""
-💡 KEY INSIGHT:
-   The AI has no memory between API calls!
-   YOU must send the entire conversation history each time.
-   
-   Call 1: [system, user1]              → assistant1
-   Call 2: [system, user1, assistant1, user2] → assistant2
-   Call 3: [system, user1, assistant1, user2, assistant2, user3] → assistant3
-""")
-
-# Build a conversation about a meeting
-conversation = [
-    {"role": "system", "content": "You are a helpful meeting assistant. Be concise."},
-    {"role": "user", "content": "I have a project kickoff meeting tomorrow with 5 people."}
-]
-
-print("\n🗣️  CONVERSATION START")
-print("-" * 40)
-print(f"👤 User: {conversation[1]['content']}")
-
-# First response
-response1 = client.chat.completions.create(
-    model=deployment,
-    messages=conversation,
-    max_completion_tokens=150
+print("⏳ Second turn (model remembers turn 1)...\n")
+r2 = client.chat.completions.create(
+    model=model, messages=messages, max_tokens=250, temperature=0.4
 )
-assistant_msg1 = response1.choices[0].message.content
-print(f"\n🤖 Assistant: {assistant_msg1}")
-
-# Add assistant's response to history and continue
-conversation.append({"role": "assistant", "content": assistant_msg1})
-conversation.append({"role": "user", "content": "The meeting is about launching a new mobile app."})
-
-print(f"\n👤 User: {conversation[3]['content']}")
-
-# Second response (includes full history!)
-response2 = client.chat.completions.create(
-    model=deployment,
-    messages=conversation,
-    max_completion_tokens=200
-)
-assistant_msg2 = response2.choices[0].message.content
-print(f"\n🤖 Assistant: {assistant_msg2}")
-
-# Add to history and ask for action items
-conversation.append({"role": "assistant", "content": assistant_msg2})
-conversation.append({"role": "user", "content": "Based on our discussion, what should be on the agenda?"})
-
-print(f"\n👤 User: {conversation[5]['content']}")
-
-# Third response
-response3 = client.chat.completions.create(
-    model=deployment,
-    messages=conversation,
-    max_completion_tokens=300
-)
-print(f"\n🤖 Assistant: {response3.choices[0].message.content}")
-print("-" * 40)
-
-print(f"\n📊 Conversation length: {len(conversation)} messages")
-print("   Notice: The AI remembered 'project kickoff' and 'mobile app'!")
+reply2 = r2.choices[0].message.content
+print(f"🤖 Tutor:\n{reply2}\n")
 
 
 # ============================================================
-# PART 4: MEETING NOTES EXAMPLE
+# PART 4: One more turn that REQUIRES memory
+# ============================================================
+messages.append({"role": "assistant", "content": reply2})
+messages.append({"role": "user", "content": "What was my very first question?"})
+
+print("⏳ Third turn (testing memory)...\n")
+r3 = client.chat.completions.create(
+    model=model, messages=messages, max_tokens=120, temperature=0.2
+)
+print(f"🤖 Tutor:\n{r3.choices[0].message.content}\n")
+
+print(f"📊 Conversation length: {len(messages)} messages "
+      f"({len(messages) - 1} excluding system).")
+
+
+# ============================================================
+# PART 5: A practical use — summarize a test run
 # ============================================================
 print("\n" + "-" * 40)
-print("PART 4: Practical Example - Meeting Notes Summary")
+print("PRACTICAL: Summarize a test run")
 print("-" * 40)
 
 meeting_notes = """
-Meeting: Q1 Planning - Jan 15, 2026
-Attendees: Sarah (PM), John (Dev), Lisa (Design), Mike (QA)
+Test run report — Release 4.21.0 — 2026-04-29
+Suite: end-to-end regression
+Results: 28 passed, 5 failed, 2 skipped (35 total)
 
-Discussion:
-- Sarah presented Q1 roadmap, targeting 3 major features
-- John raised concerns about timeline for Feature A, needs 2 extra weeks
-- Lisa showed mockups for new dashboard, team approved with minor changes
-- Mike suggested adding automated testing before each release
-- Budget discussion postponed to next week
+Failures:
+- login_with_plus_alias_email   (mobile-ios)     crash on tap Login
+- login_with_plus_alias_email   (mobile-android) same crash
+- cart_remove_last_item         (web)            UI shows ghost row after remove
+- checkout_paypal_redirect      (web)            timeout after 30s
+- profile_avatar_upload_large   (web)            413 from API
 
-Decisions:
-- Feature A deadline extended to Feb 28
-- Dashboard design approved
-- Mike to create automated testing proposal
+Skipped:
+- search_voice_input            (no test data)
+- referral_share_link           (feature-flagged off)
 """
 
-print(f"📝 Meeting Notes:\n{meeting_notes}")
-
-summary_request = [
-    {"role": "system", "content": "You are a meeting assistant. Extract key information concisely."},
-    {"role": "user", "content": f"Please summarize these meeting notes and list action items:\n\n{meeting_notes}"}
+summary_messages = [
+    {"role": "system",
+     "content": "You are an SDET. Reply with two sections: 'Headline' "
+                "(1 line: green/amber/red + reason) and 'Top issues' "
+                "(bullets with module + 1-line cause)."},
+    {"role": "user",
+     "content": f"Summarize this test run:\n\n{meeting_notes}"},
 ]
 
-print("\n⏳ Asking AI to summarize and extract action items...")
-
-response = client.chat.completions.create(
-    model=deployment,
-    messages=summary_request,
-    max_completion_tokens=300
+r = client.chat.completions.create(
+    model=model, messages=summary_messages, max_tokens=400, temperature=0.3
 )
-
-print("\n🤖 AI Summary & Action Items:")
-print("-" * 40)
-print(response.choices[0].message.content)
-print("-" * 40)
+print(r.choices[0].message.content)
 
 
 print("\n" + "=" * 60)
 print("🎯 KEY TAKEAWAYS")
 print("=" * 60)
 print("""
-   1. System prompt → Set AI personality (do this once)
-   2. User message → Your questions and input
-   3. Assistant message → AI's previous responses
-   
-   4. For multi-turn chat:
-      • Store ALL messages in a list
-      • Send the FULL list with each API call
-      • Append new messages after each response
-   
-   5. The AI doesn't remember - YOU manage the history!
-   
-   🚀 NEXT: We'll build an Agent that handles memory for us!
+   • The model has NO memory between calls. You provide it.
+   • Pattern: append the model's reply, append the next user
+     message, send the full list again.
+   • System prompt = behaviour. Set once, reuse across turns.
+   • Lower temperature for "stick to the facts" tasks.
+
+🚀 Next: Video 8 — wrap all this in a class and build a real
+   personal Life Assistant.
 """)
-
-
-print("\n" + "=" * 60)
-print("✅ COMPLETE! Next: python 05_meeting_assistant_agent.py")
-print("=" * 60)
-
-
-# ============================================================
-# 🧪 TRY IT YOURSELF!
-# ============================================================
-# Try changing the meeting notes above and run again!
-# Or add your own meeting notes to summarize.
-
-# your_notes = """
-# Your meeting notes here...
-# """
-# 
-# response = client.chat.completions.create(
-#     model=deployment,
-#     messages=[
-#         {"role": "system", "content": "Summarize meeting notes and extract action items."},
-#         {"role": "user", "content": your_notes}
-#     ],
-#     max_completion_tokens=300
-# )
-# print(response.choices[0].message.content)

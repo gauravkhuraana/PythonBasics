@@ -21,6 +21,7 @@ venv/
 .venv/
 env/
 ENV/
+gaurav/
 
 # ------------------------------------------------------------
 # PYTHON CACHE - Auto-generated, not needed in repo
@@ -58,3 +59,5 @@ dist/
 # LAB SOLUTIONS - Instructor only, not for students
 # ------------------------------------------------------------
 solutions/
+build_deck.py
+07_presentation_instructions.md

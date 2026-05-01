@@ -1,21 +1,22 @@
 """
 ================================================================
-02_environment_setup.py
-ENVIRONMENT SETUP: Virtual Environments, Secrets & .gitignore
+04_project_setup.py — Video 4
+PRO PROJECT SETUP: venv, requirements, .env, .gitignore
 ================================================================
 
-🎯 LAB GOAL REMINDER:
-Building toward your AI Meeting Assistant!
-Now let's set up the environment properly and securely.
+🎯 GOAL:
+   Set the project up the way real Python+AI projects are
+   structured — so secrets stay out of git and packages stay
+   isolated to this project.
 
 This file covers:
-  ✅ What is a Virtual Environment (venv)?
-  ✅ How to use .env files for secrets
-  ✅ Loading secrets with python-dotenv
+  ✅ What a virtual environment (venv) is and why
+  ✅ Storing config in a .env file
+  ✅ Loading config with python-dotenv
   ✅ Why .gitignore matters
-  ✅ Credential health check
+  ✅ A health check for the variables Video 6 will need
 
-Run this file: python 02_environment_setup.py
+Run this file:  python 04_project_setup.py
 ================================================================
 """
 
@@ -102,23 +103,29 @@ from dotenv import load_dotenv
 # This reads your .env file and makes values available
 load_dotenv()
 
-# Now retrieve your secrets safely
+# Now retrieve your config safely.
+# For Videos 6-9 we use the LOCAL_* variables (LM Studio).
+# AZURE_* are only needed for the bonus Video 10.
+base_url = os.getenv("LOCAL_LLM_BASE_URL")
+model    = os.getenv("LOCAL_LLM_MODEL")
 endpoint = os.getenv("AZURE_OPENAI_ENDPOINT")
 api_key = os.getenv("AZURE_OPENAI_API_KEY")
 deployment = os.getenv("AZURE_OPENAI_DEPLOYMENT_NAME")
 
 print("""
-📝 CODE TO LOAD SECRETS:
+📝 CODE TO LOAD CONFIG:
 
    import os
    from dotenv import load_dotenv
-   
-   # Load the .env file
+
    load_dotenv()
-   
-   # Get values (returns None if not found)
-   endpoint = os.getenv("AZURE_OPENAI_ENDPOINT")
-   api_key = os.getenv("AZURE_OPENAI_API_KEY")
+
+   # Local LLM (LM Studio) — main path for this course
+   base_url = os.getenv("LOCAL_LLM_BASE_URL")
+   model    = os.getenv("LOCAL_LLM_MODEL")
+
+   # Azure OpenAI — only used in the Video 10 bonus
+   endpoint   = os.getenv("AZURE_OPENAI_ENDPOINT")
    deployment = os.getenv("AZURE_OPENAI_DEPLOYMENT_NAME")
 """)
 
@@ -166,50 +173,36 @@ print("=" * 60)
 
 print("\n🔍 Checking your environment setup...\n")
 
-checks_passed = 0
-total_checks = 3
-
-# Check 1: Endpoint
-if endpoint:
-    print(f"   ✅ AZURE_OPENAI_ENDPOINT: Loaded")
-    print(f"      Value: {endpoint[:30]}..." if len(str(endpoint)) > 30 else f"      Value: {endpoint}")
-    checks_passed += 1
+print("   --- Local LLM (required for Videos 6-9) ---")
+local_ok = True
+if base_url:
+    print(f"   ✅ LOCAL_LLM_BASE_URL: {base_url}")
 else:
-    print(f"   ❌ AZURE_OPENAI_ENDPOINT: Not found!")
-    print(f"      → Make sure you copied .env.example to .env")
-    print(f"      → Fill in the URL provided by your instructor")
-
-# Check 2: API Key
-if api_key:
-    # Only show first/last few characters for security
-    masked_key = api_key[:4] + "..." + api_key[-4:] if len(api_key) > 8 else "***"
-    print(f"\n   ✅ AZURE_OPENAI_API_KEY: Loaded")
-    print(f"      Value: {masked_key} (masked for security)")
-    checks_passed += 1
+    print("   ❌ LOCAL_LLM_BASE_URL not set (default http://localhost:1234/v1 will be used)")
+    local_ok = False
+if model:
+    print(f"   ✅ LOCAL_LLM_MODEL: {model}")
 else:
-    print(f"\n   ❌ AZURE_OPENAI_API_KEY: Not found!")
-    print(f"      → Add your API key to the .env file")
+    print("   ❌ LOCAL_LLM_MODEL not set — see Video 5 for where to find it")
+    local_ok = False
 
-# Check 3: Deployment Name
-if deployment:
-    print(f"\n   ✅ AZURE_OPENAI_DEPLOYMENT_NAME: Loaded")
-    print(f"      Value: {deployment}")
-    checks_passed += 1
-else:
-    print(f"\n   ❌ AZURE_OPENAI_DEPLOYMENT_NAME: Not found!")
-    print(f"      → Add your deployment name (e.g., gpt-4o)")
+print("\n   --- Azure OpenAI (only for Video 10 bonus) ---")
+for name, val in (("AZURE_OPENAI_ENDPOINT", endpoint),
+                  ("AZURE_OPENAI_API_KEY", api_key),
+                  ("AZURE_OPENAI_DEPLOYMENT_NAME", deployment)):
+    if val:
+        masked = val[:6] + "…" if name == "AZURE_OPENAI_API_KEY" and len(val) > 6 else val
+        print(f"   ✅ {name}: {masked}")
+    else:
+        print(f"   ⚪ {name}: not set (skip if you're not doing Video 10)")
 
-
-# Summary
 print("\n" + "-" * 40)
-if checks_passed == total_checks:
-    print(f"🎉 ALL CHECKS PASSED ({checks_passed}/{total_checks})")
-    print("   You're ready for the Azure OpenAI examples!")
+if local_ok:
+    print("🎉 Local LLM config looks good — you're ready for Video 6!")
 else:
-    print(f"⚠️  {checks_passed}/{total_checks} checks passed")
-    print("\n   TO FIX:")
+    print("⚠️  Local LLM config incomplete.")
     print("   1. Copy .env.example to .env")
-    print("   2. Fill in credentials from your instructor")
+    print("   2. Fill in LOCAL_LLM_BASE_URL and LOCAL_LLM_MODEL (see Video 5)")
     print("   3. Run this file again")
 
 
@@ -228,7 +221,7 @@ print("""
 
 
 print("=" * 60)
-print("✅ COMPLETE! Next: python 03_azure_openai_simple.py")
+print("✅ COMPLETE! Next: Video 5 (LM Studio walkthrough), then 06_first_local_ai_call.py")
 print("=" * 60)
 
 

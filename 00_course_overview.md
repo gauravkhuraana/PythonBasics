@@ -1,171 +1,117 @@
-# 🎯 Python + Azure OpenAI: Hands-On Session
+# Course Overview — Getting Started with Python + AI
 
-## Session Overview
+> A learner-facing snapshot of what's in the course, what you need beforehand, and what you'll be able to do at the end.
+
+---
+
+## At a glance
 
 | | |
 |---|---|
-| **Duration** | 1 Hour |
-| **Level** | Beginner (No coding experience required) |
-| **Goal** | Build an AI Meeting Assistant that remembers your conversation |
-| **Format** | Hands-on coding with guided exercises |
+| **Audience** | Testers / SDETs / QA engineers — no coding experience needed |
+| **Level** | Absolute beginner |
+| **Duration** | ~2 hours of video, ~4–6 hours including assignments |
+| **Format** | Pre-recorded videos + working code + 3 graded assignments + 1 capstone |
+| **Outcome** | A QA-focused AI assistant running on **your laptop** that you understand line by line |
+| **Cost to follow along** | $0 (LM Studio is free; cloud is bonus only) |
 
 ---
 
-## 📋 Prerequisites (Complete BEFORE the Session)
+## ✅ What you need before Video 1
 
-### 1. Software Installation
+| Software | Purpose | Where |
+|----------|---------|-------|
+| Python 3.11+ | Run the code | <https://www.python.org/downloads/> |
+| VS Code | Write the code | <https://code.visualstudio.com/> |
+| VS Code Python extension | IntelliSense + Run button | VS Code Extensions panel |
+| GitHub Copilot *(optional)* | Used in Video 9 | VS Code Extensions panel |
+| LM Studio | Run AI on your laptop | <https://lmstudio.ai/> (installed in Video 5) |
 
-| Software | Version | Download Link |
-|----------|---------|---------------|
-| **Python** | 3.10 or higher | [python.org/downloads](https://www.python.org/downloads/) |
-| **VS Code** | Latest | [code.visualstudio.com](https://code.visualstudio.com/) |
-| **Python Extension** | Latest | Install from VS Code Extensions (Ctrl+Shift+X) |
-
-#### ✅ Verify Python Installation
-Open a terminal and run:
-```powershell
-python --version
-```
-You should see: `Python 3.10.x` or higher
+System hints for LM Studio: at least **8 GB RAM** (16 GB ideal), **5 GB free disk**, any modern CPU. A discrete GPU is great but not required for the small models we use.
 
 ---
 
-### 2. Azure OpenAI Access
+## 🎯 What you'll learn (by section)
 
-You will receive the following credentials from your instructor:
-- ✅ Azure OpenAI Endpoint URL
-- ✅ Azure OpenAI API Key
-- ✅ Deployment Name (e.g., gpt-4o)
+### Section 1 — Foundations (Videos 1–3)
+What Python is, how it runs, and just enough syntax to build with it. Examples are framed around test cases and QA workflows.
 
-> **Note:** Credentials will be provided at the start of the session. No action needed beforehand.
+### Section 2 — Project setup & first local AI call (Videos 4–6)
+Pro project hygiene (`venv`, `.env`, `.gitignore`), getting a model running locally with LM Studio, and your first prompt → response in Python.
+
+### Section 3 — Building conversational AI (Videos 7–9)
+Multi-turn chat (with a real test-run-summary example), system prompts, a class-based personal assistant, and shipping faster with GitHub Copilot.
+
+### Section 4 — Beyond local (Videos 10–11)
+Same code, swapped to Azure OpenAI in the cloud. Then a wrap-up and capstone brief.
 
 ---
 
-### 3. Download Session Materials
+## 🟢 Assignments (QA-themed)
 
-Before the session, download/clone the training folder to your computer:
+| # | Difficulty | Builds |
+|---|:---------:|--------|
+| 1 | ⭐ | Test Case Catalog (pure Python) |
+| 2 | ⭐⭐ | Bug Report Generator (first LLM call) |
+| 3 | ⭐⭐⭐ | QA Agent (multi-skill: plan, triage, summary, risk) |
+
+Bonus capstone: **Defect Triage Assistant** with cross-bug memory.
+
+---
+
+## 🏆 Final capstone
+
+In Video 11 you pick **one** mini-project to extend and submit (or invent your own). All four options are in [`assignments/`](assignments/), including the bonus **Defect Triage Assistant** with persistent cross-bug memory.
+
+---
+
+## ❓ FAQ
+
+**Do I need prior coding experience?**
+No. Video 3 covers everything you need.
+
+**Do I need a paid Azure / OpenAI account?**
+No — the main path is fully local. Video 10 (cloud) is a bonus.
+
+**My laptop is old. Will LM Studio work?**
+Probably yes with a 3B Q4 model. If responses are very slow, that's expected on CPU; outputs will still be coherent for learning.
+
+**Can I follow along on Mac / Linux?**
+Yes. Where commands differ, the README calls it out.
+
+**Will the code I write here scale to a real product?**
+The patterns will. The exact local LLM probably won't — but Video 10 shows you the swap.
+
+---
+
+## 📁 Repository map
+
 ```
 PythonBasics/
-├── README.md
-├── .env.example
-├── .gitignore
-├── requirements.txt
-├── 01_python_fundamentals.py
-├── 02_environment_setup.py
-├── 03_azure_openai_simple.py
-├── 04_azure_openai_chat.py
-└── 05_meeting_assistant_agent.py
+├─ README.md                              ← Course landing page
+├─ 00_course_overview.md                  ← (you are here)
+├─ 01_what_is_python_README.md            ← V1 notes
+├─ 02_setup_vscode_copilot_README.md      ← V2 install guide
+├─ 03_python_essentials.{py,_short.py,_README.md}
+├─ 04_project_setup.{py,_short.py,_README.md}
+├─ 05_lm_studio_README.md                 ← V5 tool walkthrough
+├─ 06_first_local_ai_call.{py,_short.py,_README.md}
+├─ 07_chat_with_memory.{py,_short.py,_README.md}
+├─ 08_life_assistant.{py,_short.py,_README.md}
+├─ 09_copilot_for_devs_README.md          ← V9 demo notes
+├─ 10_bonus_cloud_azure.{py,_short.py,_README.md}
+├─ 11_next_steps_README.md                ← Outro + capstone brief
+├─ assignments/
+│   ├─ assignment_1_test_case_catalog/
+│   ├─ assignment_2_bug_report_generator/
+│   ├─ assignment_3_qa_agent/
+│   └─ capstone_options/                  ← Bonus: Defect Triage Assistant
+├─ solutions/                             ← (gitignored)
+├─ requirements.txt
+├─ .env.example
+└─ .gitignore
 ```
 
 ---
 
-## 🎓 What You Will Learn
-
-### Part 1: Python Fundamentals (~12 min)
-- **Variables & Data Types**: `str`, `int`, `float`, `bool`
-- **Collections**: Lists `[]` and Dictionaries `{}`
-- **Why it matters**: These are building blocks for AI API calls
-
-### Part 2: Environment Setup (~10 min)
-- **Virtual Environments (venv)**: Isolate project packages
-- **Secrets Management (.env)**: Store API keys safely
-- **Git Ignore (.gitignore)**: Protect secrets from commits
-- **Why it matters**: Professional setup that keeps credentials secure
-
-### Part 3: Your First AI API Call (~12 min)
-- **Azure OpenAI Client**: Connect to Azure
-- **Simple Request**: Send a prompt, get a response
-- **Understanding Tokens**: How AI usage is measured
-- **Why it matters**: The foundation of all AI applications
-
-### Part 4: Chat with Message History (~8 min)
-- **System Prompts**: Set AI behavior/personality
-- **Multi-turn Conversations**: Maintain chat history
-- **Practical Example**: Summarize meeting notes
-- **Why it matters**: Real AI apps need conversation context
-
-### Part 5: Build Your Meeting Assistant Agent (~13 min)
-- **Agents vs Chat**: Why agents are more powerful
-- **Threads**: Automatic conversation memory
-- **Your Meeting Assistant**: Helps with agendas, action items, follow-ups
-- **Why it matters**: Experience the "wow factor" of AI agents!
-
----
-
-## 🏆 By the End of This Session, You Will...
-
-✅ Understand Python basics needed for AI development  
-✅ Know how to securely manage API credentials  
-✅ Make your first Azure OpenAI API call  
-✅ Build a multi-turn chatbot with memory  
-✅ Create an AI Meeting Assistant agent  
-✅ Have working code you can extend for your own projects  
-
----
-
-## 📁 Session Files Overview
-
-| File | What You'll Build | Key Concepts |
-|------|-------------------|--------------|
-| `01_python_fundamentals.py` | Learn Python basics | Variables, lists, dictionaries |
-| `02_environment_setup.py` | Configure your environment | venv, .env, gitignore |
-| `03_azure_openai_simple.py` | First AI API call | Client setup, prompts, responses |
-| `04_azure_openai_chat.py` | Chatbot with history | System prompts, multi-turn |
-| `05_meeting_assistant_agent.py` | 🎉 **Meeting Assistant!** | Agents, threads, memory |
-
----
-
-## ⏱️ Session Timeline
-
-| Time | Activity | File |
-|------|----------|------|
-| 0:00 - 0:05 | Setup verification | - |
-| 0:05 - 0:17 | Python Fundamentals | `01_python_fundamentals.py` |
-| 0:17 - 0:27 | Environment Setup | `02_environment_setup.py` |
-| 0:27 - 0:39 | First Azure OpenAI Call | `03_azure_openai_simple.py` |
-| 0:39 - 0:47 | Chat with Messages | `04_azure_openai_chat.py` |
-| 0:47 - 1:00 | Build Meeting Assistant | `05_meeting_assistant_agent.py` |
-
----
-
-## ❓ Frequently Asked Questions
-
-**Q: Do I need prior coding experience?**  
-A: No! This session is designed for complete beginners.
-
-**Q: What if I fall behind during the session?**  
-A: All files have detailed comments. You can catch up at your own pace.
-
-**Q: Can I keep the code after the session?**  
-A: Yes! The code is yours to extend and use.
-
-**Q: Will the Azure OpenAI credentials keep working?**  
-A: Check with your instructor about credential validity after the session.
-
-**Q: What if something doesn't work?**  
-A: Each file includes troubleshooting tips. The README has common fixes.
-
----
-
-## 🚀 Quick Start Checklist
-
-Before the session begins, verify:
-
-- [ ] Python 3.10+ installed (`python --version`)
-- [ ] VS Code installed and working
-- [ ] Python extension installed in VS Code
-- [ ] Session materials downloaded
-- [ ] Terminal opens in VS Code (Ctrl+`)
-
----
-
-## 📞 Need Help?
-
-If you encounter issues during setup:
-1. Check the troubleshooting section in `README.md`
-2. Ask your instructor or session facilitator
-3. Google the exact error message (most Python errors are well-documented!)
-
----
-
-**See you at the session! 🎉**
+Ready? Open [Video 1's README](01_what_is_python_README.md) and let's go. 🚀

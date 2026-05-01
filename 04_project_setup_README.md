@@ -1,6 +1,6 @@
 # Module 2: Environment Setup -- Virtual Environments, Secrets, and .gitignore
 
-## Companion Reference for `02_environment_setup.py`
+## Companion Reference for `04_project_setup.py`
 
 ### Overview
 
@@ -14,7 +14,7 @@ By the end of this module your environment will be fully configured and verified
 
 ### Prerequisites
 
-- Completed Module 1 (`01_python_fundamentals.py`)
+- Completed Module 1 (`03_python_essentials.py`)
 - Python 3.10+ installed
 - VS Code with the Python extension
 - Session materials downloaded (the project folder)
@@ -178,7 +178,7 @@ The file is organized into 5 parts:
 Run the file to verify your setup:
 
 ```bash
-python 02_environment_setup.py
+python 04_project_setup.py
 ```
 
 You should see `3/3 checks passed` at the end. If not, follow the instructions in the output to fix your `.env` file.
@@ -214,7 +214,7 @@ Add a custom environment variable to practice the workflow:
 
 1. Open your `.env` file
 2. Add a new line: `MY_NAME=YourNameHere`
-3. Uncomment the code at the bottom of `02_environment_setup.py`:
+3. Uncomment the code at the bottom of `04_project_setup.py`:
 
 ```python
 my_name = os.getenv("MY_NAME")
@@ -227,4 +227,4 @@ print(f"Hello, {my_name}! Your custom variable works!")
 
 ### What's Next
 
-In **Module 3 (03_azure_openai_simple.py)** you will use these loaded credentials to create an Azure OpenAI client and make your very first API call to an AI model. You will send a prompt and receive an AI-generated response.
+In **Module 3 (`06_first_local_ai_call.py`)** you will use these loaded variables to create an OpenAI-compatible client pointed at LM Studio and make your very first call to a local AI model. You will send a prompt and receive an AI-generated response — all running on your laptop. (A bonus Module 10 covers the same thing against Azure OpenAI in the cloud.)

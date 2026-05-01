@@ -1,25 +1,23 @@
 """
 ================================================================
-03_azure_openai_simple.py
-AZURE OPENAI: Your First API Call
+10_bonus_cloud_azure.py
+BONUS: Connect to Azure OpenAI — same code, different client
 ================================================================
 
-🎯 LAB GOAL REMINDER:
-Building toward your AI Meeting Assistant!
-Now let's make your first real AI API call.
+🎯 GOAL:
+   Show that going from local to cloud is a 2-line change:
+     1. Use AzureOpenAI() instead of OpenAI()
+     2. Pass endpoint + auth instead of base_url + dummy key
 
-This file covers:
-  ✅ Setting up the Azure OpenAI client
-  ✅ Making a simple API request
-  ✅ Understanding the response
-  ✅ Common errors and troubleshooting
+Everything else (messages, response parsing) is identical to
+Video 6's local example.
 
 Prerequisites:
-  - Completed 02_environment_setup.py (credentials loaded)
-  - Virtual environment activated
-  - packages installed (pip install -r requirements.txt)
+  - An Azure OpenAI resource + a deployment (e.g., gpt-4o)
+  - .env has AZURE_OPENAI_ENDPOINT and AZURE_OPENAI_DEPLOYMENT_NAME
+  - Run `az login` first (we use Azure AD auth — no API key in code)
 
-Run this file: python 03_azure_openai_simple.py
+Run this file:  python 10_bonus_cloud_azure.py
 ================================================================
 """
 
@@ -28,51 +26,17 @@ from dotenv import load_dotenv
 from openai import AzureOpenAI
 from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 
-# ============================================================
-# STEP 1: Load environment variables
-# ============================================================
 load_dotenv()
 
-endpoint = os.getenv("AZURE_OPENAI_ENDPOINT")
+endpoint   = os.getenv("AZURE_OPENAI_ENDPOINT")
 deployment = os.getenv("AZURE_OPENAI_DEPLOYMENT_NAME")
 
-print("=" * 60)
-print("AZURE OPENAI: Your First API Call")
-print("=" * 60)
-
-# Quick check before proceeding
 if not all([endpoint, deployment]):
-    print("\n❌ ERROR: Missing credentials!")
-    print("   Please run 02_environment_setup.py first")
-    print("   and make sure your .env file is configured.")
-    exit(1)
+    print("❌ Missing AZURE_OPENAI_ENDPOINT or AZURE_OPENAI_DEPLOYMENT_NAME in .env")
+    raise SystemExit(1)
 
-print("\n✅ Credentials loaded successfully!")
-
-
-# ============================================================
-# STEP 2: Create the Azure OpenAI client
-# ============================================================
-print("\n" + "-" * 40)
-print("STEP 2: Creating Azure OpenAI Client")
-print("-" * 40)
-
-print("""
-📝 CODE EXPLANATION:
-
-   # Using Azure AD token-based auth (no API key needed!)
-   credential = DefaultAzureCredential()
-   token_provider = get_bearer_token_provider(
-       credential, "https://cognitiveservices.azure.com/.default"
-   )
-   client = AzureOpenAI(
-       azure_endpoint=endpoint,
-       azure_ad_token_provider=token_provider,
-       api_version="2024-12-01-preview"
-   )
-""")
-
-# Use Azure AD authentication (key-based auth is disabled by org policy)
+# Azure AD auth — no API key in code or .env.
+# (You can also use api_key=... if your org allows key-based auth.)
 credential = DefaultAzureCredential()
 token_provider = get_bearer_token_provider(
     credential, "https://cognitiveservices.azure.com/.default"
@@ -81,126 +45,43 @@ token_provider = get_bearer_token_provider(
 client = AzureOpenAI(
     azure_endpoint=endpoint,
     azure_ad_token_provider=token_provider,
-    api_version="2024-12-01-preview"
+    api_version="2024-12-01-preview",
 )
 
-print("✅ Client created!")
+print("=" * 60)
+print("BONUS: Same prompt, but in the cloud (Azure OpenAI)")
+print("=" * 60)
+print(f"\n📡 Endpoint:   {endpoint}")
+print(f"🤖 Deployment: {deployment}")
 
+prompt = "In 3 short bullets, what makes Python a great language for AI?"
+print(f"\n🗣️  Prompt: {prompt}")
+print("⏳ Calling Azure OpenAI...\n")
 
-# ============================================================
-# STEP 3: Make a simple API call
-# ============================================================
-print("\n" + "-" * 40)
-print("STEP 3: Making Your First API Call")
+response = client.chat.completions.create(
+    model=deployment,  # for AzureOpenAI, "model" = your deployment name
+    messages=[{"role": "user", "content": prompt}],
+    max_completion_tokens=200,
+    temperature=0.7,
+)
+
+print("🤖 Response")
+print("-" * 40)
+print(response.choices[0].message.content)
 print("-" * 40)
 
+usage = response.usage
+if usage:
+    print(f"\n📊 Tokens — prompt: {usage.prompt_tokens}, "
+          f"completion: {usage.completion_tokens}, "
+          f"total: {usage.total_tokens}")
+
 print("""
-📝 CODE EXPLANATION:
+🎯 KEY TAKEAWAY
+   The only meaningful difference vs Video 6 is the client setup.
+   Once you have a `client`, the rest of the OpenAI SDK API is
+   the same — which is why the apps you built in Videos 7 & 8
+   can be ported to the cloud by swapping the constructor.
 
-   response = client.chat.completions.create(
-       model=deployment,           # Your deployment name (e.g., "gpt-4o")
-       messages=[                  # List of messages (remember File 01!)
-           {
-               "role": "user",     # Who is speaking
-               "content": "..."    # What they're saying
-           }
-       ],
-       max_tokens=150              # Limit response length
-   )
+🚀 Wrap-up next: Video 11.
 """)
-
-# Our first prompt - meeting-related to preview the final goal!
-prompt = "What are 3 tips for running effective meetings? Keep it brief."
-
-print(f"\n🗣️  Your prompt: \"{prompt}\"")
-print("\n⏳ Sending request to Azure OpenAI...")
-
-try:
-    response = client.chat.completions.create(
-        model=deployment,
-        messages=[
-            {
-                "role": "user",
-                "content": prompt
-            }
-        ],
-        max_completion_tokens=200
-    )
-    
-    # ============================================================
-    # STEP 4: Understanding the response
-    # ============================================================
-    print("\n" + "-" * 40)
-    print("STEP 4: Understanding the Response")
-    print("-" * 40)
-    
-    print("""
-📝 RESPONSE STRUCTURE:
-
-   response.choices[0].message.content  → The AI's answer (text)
-   response.choices[0].message.role     → "assistant"
-   response.usage.prompt_tokens         → Tokens in your prompt
-   response.usage.completion_tokens     → Tokens in the response
-   response.usage.total_tokens          → Total tokens used
-    """)
-    
-    # Extract the AI's response
-    ai_response = response.choices[0].message.content
-    
-    print("\n🤖 AI RESPONSE:")
-    print("-" * 40)
-    print(ai_response)
-    print("-" * 40)
-    
-    # Show token usage
-    print(f"\n📊 TOKEN USAGE:")
-    print(f"   Prompt tokens:     {response.usage.prompt_tokens}")
-    print(f"   Completion tokens: {response.usage.completion_tokens}")
-    print(f"   Total tokens:      {response.usage.total_tokens}")
-    
-    print("\n🎉 SUCCESS! You just made your first Azure OpenAI API call!")
-
-except Exception as e:
-    print(f"\n❌ ERROR: {type(e).__name__}")
-    print(f"   {str(e)}")
-    print("\n🔧 TROUBLESHOOTING:")
-    print("   - AuthenticationError: Check your API key in .env")
-    print("   - NotFoundError: Check your endpoint URL in .env")
-    print("   - DeploymentNotFound: Check deployment name matches Azure portal")
-
-
-print("\n" + "=" * 60)
-print("🎯 KEY TAKEAWAYS")
-print("=" * 60)
-print("""
-   1. AzureOpenAI() - Create client with endpoint, key, version
-   2. client.chat.completions.create() - Make API call
-   3. messages = [{"role": "...", "content": "..."}] - Input format
-   4. response.choices[0].message.content - Get AI response
-   5. response.usage - See token counts (affects cost!)
-   
-   🔑 REMEMBER: Each API call costs tokens!
-      - Be concise with prompts
-      - Set reasonable max_tokens
-      - Monitor your usage
-""")
-
-
-print("\n" + "=" * 60)
-print("✅ COMPLETE! Next: python 04_azure_openai_chat.py")
-print("=" * 60)
-
-
-# ============================================================
-# 🧪 TRY IT YOURSELF!
-# ============================================================
-# Change the prompt below and run again!
-
-# prompt = "What should be included in a meeting agenda?"
-# 
-# response = client.chat.completions.create(
-#     model=deployment,
-#     messages=[{"role": "user", "content": prompt}],
-#     max_tokens=200
-# )
-# print(response.choices[0].message.content)

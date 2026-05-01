@@ -1,110 +1,112 @@
-# 🎯 Python + Azure OpenAI: Hands-On Session
+# Getting Started with Python + AI
 
-## Lab Goal: Build an AI Meeting Assistant
+> An 11-video starter course that takes you from "what is Python?" to "I built a personal AI assistant running on my own laptop."
 
-**By the end of this 1-hour session, you will build an AI Meeting Assistant that:**
-- ✅ Remembers your entire conversation
-- ✅ Helps create meeting agendas
-- ✅ Extracts action items from meeting notes
-- ✅ Provides follow-up suggestions
-
-You'll learn Python basics, environment setup, and Azure OpenAI—all leading to this goal!
+[![Level](https://img.shields.io/badge/level-beginner-brightgreen)]()
+[![Videos](https://img.shields.io/badge/videos-11-blue)]()
+[![Local%20LLM](https://img.shields.io/badge/runs-locally-orange)]()
 
 ---
 
-## 📁 Session Files (Complete in Order)
+## Who this course is for
 
-| # | File | Duration | What You'll Learn |
-|---|------|----------|-------------------|
-| 1 | `01_python_fundamentals.py` | ~12 min | Variables, types, lists, dictionaries |
-| 2 | `02_environment_setup.py` | ~10 min | Virtual environments, secrets, .gitignore |
-| 3 | `03_azure_openai_simple.py` | ~12 min | Your first AI API call |
-| 4 | `04_azure_openai_chat.py` | ~8 min | Chat with message history |
-| 5 | `05_meeting_assistant_agent.py` | ~13 min | 🎉 Build your Meeting Assistant! |
+- **Testers, SDETs, QA engineers** who want to add Python + AI to their toolkit — the assignments and capstone are all QA-flavoured.
+- You may have **zero coding experience**.
+- You don't want to pay for cloud APIs while you're learning.
+
+By the end you will have built a real **Defect Triage Assistant** (or one of three other QA-focused mini-projects) running **entirely on your laptop**.
 
 ---
 
-## 🚀 Setup Instructions
+## 🎬 The 11 Videos
 
-### Step 1: Open Terminal in VS Code
-- Press `` Ctrl+` `` (backtick) to open the terminal
-- Or go to **View → Terminal**
+| # | Title | Duration | Materials |
+|---|-------|---------:|-----------|
+| 1 | Welcome & What is Python + AI | 5–7 min | [README](01_what_is_python_README.md) |
+| 2 | Setting Up Your AI Workshop | 8–10 min | [README](02_setup_vscode_copilot_README.md) |
+| 3 | Python Essentials for AI in 15 Minutes | 12–15 min | [Code](03_python_essentials.py) · [Short](03_python_essentials_short.py) · [README](03_python_essentials_README.md) |
+| 4 | Pro Project Setup (venv, .env, .gitignore) | 8–10 min | [Code](04_project_setup.py) · [Short](04_project_setup_short.py) · [README](04_project_setup_README.md) |
+| 5 | Run AI on Your Laptop with LM Studio | 10–12 min | [README](05_lm_studio_README.md) |
+| 6 | Your First Python → Local LLM Program | 12–15 min | [Code](06_first_local_ai_call.py) · [Short](06_first_local_ai_call_short.py) · [README](06_first_local_ai_call_README.md) |
+| 7 | Multi-Turn Chat with Memory | 10–12 min | [Code](07_chat_with_memory.py) · [Short](07_chat_with_memory_short.py) · [README](07_chat_with_memory_README.md) |
+| 8 | **Build a Personal Life Assistant** | 15–18 min | [Code](08_life_assistant.py) · [Short](08_life_assistant_short.py) · [README](08_life_assistant_README.md) |
+| 9 | Code Faster with GitHub Copilot | 8–10 min | [README](09_copilot_for_devs_README.md) |
+| 10 | Bonus: Connect to Cloud AI (Azure OpenAI) | 10–12 min | [Code](10_bonus_cloud_azure.py) · [Short](10_bonus_cloud_azure_short.py) · [README](10_bonus_cloud_azure_README.md) |
+| 11 | Wrap-Up & Your Next Steps | 5–7 min | [README](11_next_steps_README.md) |
 
-### Step 2: Create Virtual Environment
+**Total runtime:** ~110–135 minutes.
+
+---
+
+## 🟢 Assignments (QA-themed)
+
+Three graded assignments unlock as you progress:
+
+| After Video | Difficulty | Assignment | What you build |
+|:-----------:|:----------:|------------|----------------|
+| 3 | ⭐ | [Test Case Catalog](assignments/assignment_1_test_case_catalog/) | Pure-Python catalog: store, search, summarise test cases |
+| 6 | ⭐⭐ | [Bug Report Generator](assignments/assignment_2_bug_report_generator/) | LLM turns rough bug notes into a polished bug report |
+| 9 | ⭐⭐⭐ | [QA Agent](assignments/assignment_3_qa_agent/) | Multi-skill agent: test plan / triage / run summary / risk |
+
+A bonus capstone — the [Defect Triage Assistant](assignments/capstone_options/) — is also available for those who want a fourth project with a real interactive loop.
+
+Solutions live in `solutions/` (gitignored on this branch — request them if you're stuck).
+
+---
+
+## 🚀 Quick start
+
 ```powershell
-# Navigate to this folder (if not already there)
-cd e:\Automation\PythonBasics
+# Windows PowerShell — Mac/Linux is similar
 
-# Create virtual environment
+# 1. Clone and enter
+git clone <repo-url>
+cd PythonBasics
+
+# 2. Create + activate a virtual environment
 python -m venv venv
+.\venv\Scripts\Activate.ps1
 
-# Activate it (Windows)
-.\venv\Scripts\Activate
-
-# You should see (venv) at the start of your terminal prompt
-```
-
-### Step 3: Install Required Packages
-```powershell
+# 3. Install packages
 pip install -r requirements.txt
-```
 
-### Step 4: Configure Your Credentials
-1. Copy `.env.example` to `.env`
-2. Fill in the Azure OpenAI credentials provided by your instructor:
-   - `AZURE_OPENAI_ENDPOINT` - Your Azure OpenAI resource URL
-   - `AZURE_OPENAI_API_KEY` - Your API key
-   - `AZURE_OPENAI_DEPLOYMENT_NAME` - Model deployment name (e.g., gpt-4o)
+# 4. Configure environment
+Copy-Item .env.example .env
+# (edit .env — for Videos 1-9 you only need LOCAL_LLM_* variables)
 
-### Step 5: Run Each File in Order
-```powershell
-python 01_python_fundamentals.py
-python 02_environment_setup.py
-python 03_azure_openai_simple.py
-python 04_azure_openai_chat.py
-python 05_meeting_assistant_agent.py
+# 5. Start LM Studio, load a model, click "Start Server" (Video 5)
+
+# 6. Run your first AI program (Video 6)
+python 06_first_local_ai_call.py
 ```
 
 ---
 
-## 🔧 Troubleshooting
+## 📦 What's installed
 
-### "python is not recognized"
-- Make sure Python is installed and added to PATH
-- Try `python3` instead of `python`
-
-### "ModuleNotFoundError: No module named 'openai'"
-- Make sure your virtual environment is activated: `.\venv\Scripts\Activate`
-- Run `pip install -r requirements.txt` again
-
-### "AuthenticationError" or "API key invalid"
-- Check your `.env` file has the correct API key
-- Make sure there are no extra spaces or quotes
-
-### "Resource not found" or "Endpoint not found"
-- Verify your `AZURE_OPENAI_ENDPOINT` URL is correct
-- It should look like: `https://your-resource-name.openai.azure.com/`
-
-### "DeploymentNotFound"
-- Check that `AZURE_OPENAI_DEPLOYMENT_NAME` matches your Azure portal exactly
+```
+openai          — OpenAI SDK (works for both local & Azure)
+python-dotenv   — load .env files
+azure-identity  — Azure AD auth (only for the Video 10 bonus)
+```
 
 ---
 
-## 📚 What's Next?
+## 📚 Course philosophy
 
-After this session, you can explore:
-- **Advanced prompting**: Chain-of-thought, few-shot learning
-- **Agent tools**: Code interpreter, file search
-- **Building applications**: Streamlit, Gradio for UI
-- **RAG (Retrieval-Augmented Generation)**: Connect AI to your documents
+- **Local first.** No cloud account, no credit card, no rate limits while learning.
+- **Build something real.** Every concept is taught via a file you'll actually run.
+- **One short + one long file per video.** Use the short one in your demos and the long one to read at your own pace.
+- **No frameworks until you need them.** Pure Python and the OpenAI SDK — that's it.
 
 ---
 
-## 💡 Tips for Success
+## 📬 Connect
 
-1. **Run each file** before moving to the next—they build on each other
-2. **Read the comments**—they explain what each line does
-3. **Experiment!** Change prompts and see what happens
-4. **Ask questions**—there are no silly questions when learning
+- 🎥 Find this course on Udemy: *(link in course description)*
+- 💬 Topmate for 1:1 review of your capstone: *(link in course description)*
+- ⭐ If this helped you, star the repo so you can find it later.
 
-Good luck and enjoy building your first AI application! 🚀
+---
+
+Made by Gaurav. See you in [Video 1](01_what_is_python_README.md). 🚀

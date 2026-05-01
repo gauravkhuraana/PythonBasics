@@ -1,6 +1,6 @@
 # Module 1: Python Fundamentals -- Variables, Types, and Collections
 
-## Companion Reference for `01_python_fundamentals.py`
+## Companion Reference for `03_python_essentials.py`
 
 ### Overview
 
@@ -312,7 +312,7 @@ The file is organized into 4 parts:
 Run the file to see all examples in action:
 
 ```bash
-python 01_python_fundamentals.py
+python 03_python_essentials.py
 ```
 
 ---
@@ -370,4 +370,7 @@ Experiment ideas:
 
 ### What's Next
 
-In **Module 2 (02_environment_setup.py)** you will set up a professional development environment with virtual environments, secure secret management using `.env` files, and learn why `.gitignore` is critical for protecting your API keys.
+In **Module 2 (`04_project_setup.py`)** you will set up a professional development environment with virtual environments, secure secret management using `.env` files, and learn why `.gitignore` is critical for protecting your API keys.
+
+You also unlock **Assignment 1 — Test Case Catalog**:
+[assignments/assignment_1_test_case_catalog/](assignments/assignment_1_test_case_catalog/) — a pure-Python practice project: store, search, and summarise test cases. Same `list of dicts` shape you'll send to an AI in Assignment 2.

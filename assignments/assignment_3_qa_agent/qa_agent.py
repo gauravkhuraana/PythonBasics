@@ -1,398 +1,268 @@
 """
 ================================================================
-🧪 LAB ASSIGNMENT 3 — HARD LEVEL
-   Build a Multi-Skill Project Manager Agent
+🧪 ASSIGNMENT 3 — HARD LEVEL
+   Build a Multi-Skill QA Agent (uses your local LLM)
 ================================================================
 
 ⏱️  Estimated time: 30-45 minutes
-🎯  Difficulty: ⭐⭐⭐ Hard (Agent with tools & memory)
+🎯  Difficulty: ⭐⭐⭐ Hard
 
 SCENARIO:
-   Build a Project Manager Agent that can handle MULTIPLE types
-   of requests through different "skills" (tools). The agent
-   should detect what the user needs and route to the right skill.
+   You're the lone SDET on a small team and you want an AI
+   pair that can switch hats: write a test plan one minute,
+   triage a bug the next, summarize a test run, and call out
+   release risks. Build a single agent class that detects
+   WHICH skill the user is asking for and uses the right prompt.
 
    Skills:
-   1. 📋 Agenda Creator   — Build meeting agendas
-   2. 📝 Notes Summarizer — Summarize meeting notes + action items
-   3. 📧 Email Drafter    — Write follow-up emails from meetings
-   4. ⚠️  Risk Analyzer   — Identify project risks from discussion
+   1. 📋 Test Plan Author     — Build a structured test plan
+                                 from a feature description.
+   2. 🐞 Bug Triager          — Suggest severity, owner area,
+                                 and likely duplicates from a
+                                 raw bug description.
+   3. 📊 Test Run Summarizer  — Turn a list of test results
+                                 into a clean release-ready
+                                 status summary.
+   4. ⚠️  Release Risk Analyzer— Identify quality risks for an
+                                 upcoming release based on
+                                 conversation context.
 
-SKILLS TESTED (from Files 01-05):
+SKILLS TESTED (from Videos 3-9):
    ✅ Python classes and methods
    ✅ System prompts & role-based messages
    ✅ Multi-turn conversation with memory
    ✅ Building an agent architecture
-   ✅ Tool/skill routing logic
+   ✅ Skill / tool routing logic
    ✅ Prompt engineering for different tasks
 
 Prerequisites:
-   - All previous files completed
-   - .env file configured
-   - Logged in via 'az login'
+   - Videos 1-9 complete
+   - LM Studio running with a model loaded
+   - .env has LOCAL_LLM_BASE_URL and LOCAL_LLM_MODEL
 
 ================================================================
 📋 INSTRUCTIONS — Complete the TODOs below!
 ================================================================
 
-Run when done:  python lab_hard_project_manager_agent.py
+Run when done:  python qa_agent.py
 
 EXPECTED BEHAVIOR:
-   Agent detects what you need and uses the right skill:
-   
-   You: "I have a meeting tomorrow with 5 people about Q2 planning"
-   Agent: [Uses Agenda Creator skill] → Generates structured agenda
-   
-   You: "Here are my notes from today's standup: ..."
-   Agent: [Uses Notes Summarizer skill] → Summary + action items
-   
-   You: "Draft a follow-up email to the team about what we discussed"
-   Agent: [Uses Email Drafter skill] → Professional email using context
-   
-   You: "What risks did you notice in our discussion?"
-   Agent: [Uses Risk Analyzer skill] → Risk assessment from context
+   The agent picks the right skill based on what you ask:
+
+   You: "Write a test plan for the new password reset flow"
+   Agent: 🔧 [test_plan]   → structured plan w/ scope, scenarios, data
+
+   You: "Bug: app crashes on iPhone when email has a + sign"
+   Agent: 🔧 [triage]      → severity, area, likely duplicates
+
+   You: "Summarize: 12 passed, 3 failed (login,cart,checkout), 1 skipped"
+   Agent: 🔧 [summary]     → release-ready status with red flags
+
+   You: "What risks do you see for tomorrow's release?"
+   Agent: 🔧 [risk]        → categorised risk register
 
 ================================================================
 """
 
 import os
 from dotenv import load_dotenv
-from openai import AzureOpenAI
-from azure.identity import DefaultAzureCredential, get_bearer_token_provider
+from openai import OpenAI
 
-# Load credentials and create client
 load_dotenv()
 
-credential = DefaultAzureCredential()
-token_provider = get_bearer_token_provider(
-    credential, "https://cognitiveservices.azure.com/.default"
+client = OpenAI(
+    base_url=os.getenv("LOCAL_LLM_BASE_URL", "http://localhost:1234/v1"),
+    api_key="lm-studio",
 )
-
-client = AzureOpenAI(
-    azure_ad_token_provider=token_provider,
-    api_version="2024-12-01-preview",
-    azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT")
-)
-
-deployment = os.getenv("AZURE_OPENAI_DEPLOYMENT_NAME")
+model = os.getenv("LOCAL_LLM_MODEL", "local-model")
 
 print("=" * 60)
-print("🧪 LAB: Multi-Skill Project Manager Agent")
+print("🧪 ASSIGNMENT 3: Multi-Skill QA Agent")
 print("=" * 60)
 
 
 # ============================================================
-# TASK 1: Define the Skill Prompts (5 points)
+# TASK 1: Define the skill prompts (5 points)
 # ============================================================
-# TODO: Write specialized system prompts for each skill.
-#       Each prompt should clearly instruct the AI on:
-#       - What role it plays for this skill
-#       - What format to use for output
-#       - Any rules or constraints
-#
-# HINT: Think about what makes a good agenda vs. a good
-#       summary vs. a good email. Each needs different rules!
+# TODO: Flesh out each system prompt. Each one should clearly
+#       say what role the AI plays, what to output, and the
+#       format. Specificity beats word count.
 # ============================================================
 
 SKILL_PROMPTS = {
-    "agenda": """You are an expert Meeting Agenda Creator.
-# TODO: Complete this prompt. Tell the AI:
-#   - To create structured, time-boxed agendas
-#   - Include agenda item, duration, and owner
-#   - Always add a "parking lot" for off-topic items
-#   - Format as a clean, numbered list
+    "test_plan": """You are a Senior SDET writing test plans.
+# TODO: complete this. Tell the model to output:
+#   - Scope (what's covered + what isn't)
+#   - Test scenarios as a numbered list, each with:
+#       title, type (functional/negative/edge/perf/security),
+#       steps, expected result
+#   - Required test data
+#   - Suggested automation candidates
+#   - Use markdown.
 """,
-    
-    "summarize": """You are an expert Meeting Notes Summarizer.
-# TODO: Complete this prompt. Tell the AI:
-#   - To extract key decisions, action items, and follow-ups
-#   - Action items must have: task, owner, deadline
-#   - Include a "TL;DR" at the top (3 sentences max)
-#   - Flag any unresolved items
+
+    "triage": """You are a triage engineer for incoming bug reports.
+# TODO: complete this. The model should output:
+#   - Suggested severity (Critical/High/Medium/Low) + 1-line reason
+#   - Likely owner area (auth, payments, ui, infra, ...)
+#   - Duplicate-likelihood (Low/Medium/High) + what to search for
+#   - 3 clarifying questions to ask the reporter
 """,
-    
-    "email": """You are an expert Follow-Up Email Drafter.
-# TODO: Complete this prompt. Tell the AI:
-#   - To write professional follow-up emails
-#   - Include: Subject line, greeting, recap, action items, sign-off
-#   - Reference specific discussion points from context
-#   - Keep it concise (under 200 words for the body)
+
+    "summary": """You are an SDET writing a release-status summary
+from raw test-run data.
+# TODO: complete this. Output:
+#   - One-line headline (✅ green / ⚠️ amber / 🛑 red) with reason
+#   - Pass/fail/skip counts and pass rate
+#   - Top 3 areas of concern (which modules failed, why it matters)
+#   - Recommendation: ship / hold / hotfix
 """,
-    
-    "risk": """You are an expert Project Risk Analyzer.
-# TODO: Complete this prompt. Tell the AI:
-#   - To identify risks from meeting discussions
-#   - Categorize: Timeline, Resource, Technical, Scope risks
-#   - Rate each risk: High / Medium / Low
-#   - Suggest mitigation actions
-#   - Format as a risk register table
-"""
+
+    "risk": """You are a Release Risk Analyzer for QA.
+# TODO: complete this. Output a markdown table with columns:
+#   Risk | Category (timeline/scope/quality/infra) | Likelihood (L/M/H)
+#   | Impact (L/M/H) | Mitigation
+# Use ONLY information from the prior conversation context.
+""",
 }
 
 
 # ============================================================
-# TASK 2: Build the ProjectManagerAgent class (8 points)
+# TASK 2: Build the QAAgent class (8 points)
 # ============================================================
-# TODO: Complete the agent class below.
-#       Key requirements:
-#       - Has a main system prompt (the "manager" personality)
-#       - Maintains conversation history across all messages
-#       - Can detect which skill to use based on user input
-#       - Routes to the right skill prompt for specialized tasks
+# Requirements:
+#   - Has a base "manager" personality for general chat
+#   - Maintains conversation history across turns (memory!)
+#   - Detects which skill to use from the user's message
+#   - Routes to the right skill prompt for specialized tasks
 #
-# HINT: Look at MeetingAssistant in 05_meeting_assistant_agent.py
-#       for the basic pattern, then ADD skill detection on top.
+# HINT: Start from the LifeAssistant pattern in
+#       08_life_assistant.py and ADD skill detection.
 # ============================================================
 
-class ProjectManagerAgent:
-    """A multi-skill Project Manager Agent with conversation memory."""
-    
+class QAAgent:
+    """A multi-skill QA Agent with conversation memory."""
+
     def __init__(self, client, model):
         self.client = client
         self.model = model
-        self.name = "PM Agent"
-        
-        # The manager's core personality
-        self.system_prompt = """You are a professional Project Manager AI called "PM Agent".
+        self.name = "QA Agent"
 
-You have multiple skills and should use the most appropriate one:
-- When asked about agendas or meeting preparation → use agenda skill
-- When given meeting notes to process → use summarizer skill  
-- When asked to draft emails → use email skill
-- When asked about risks or concerns → use risk analyzer skill
+        self.system_prompt = """You are an experienced QA / SDET assistant called "QA Agent".
 
-For general questions, respond helpfully using your PM expertise.
-Always remember our full conversation context.
-Be concise, use bullet points, and stay professional."""
+You have several skills:
+- When asked to plan tests / scope coverage / list scenarios → use test_plan
+- When given a raw bug description that needs triaging      → use triage
+- When given test-run results to summarize                  → use summary
+- When asked about release / quality risks                  → use risk
 
-        # Conversation history — the agent's memory!
-        self.history = [
-            {"role": "system", "content": self.system_prompt}
-        ]
-        
-        # Track which skills have been used
+For everything else (questions, brainstorming, follow-ups) respond
+helpfully using your QA expertise. Be concise. Use bullets and tables.
+Always remember the full conversation context."""
+
+        self.history = [{"role": "system", "content": self.system_prompt}]
         self.skills_used = []
-    
-    
+
+    # ------------------------------------------------------------
     def detect_skill(self, user_message):
-        """
-        Detect which skill to use based on the user's message.
-        Returns: "agenda", "summarize", "email", "risk", or None
-        
-        TODO: Implement skill detection logic (4 points)
-        
-        HINT: Check if certain keywords appear in the message.
-              Use .lower() for case-insensitive matching.
-        
-        Examples:
-          "Create an agenda for..."      → "agenda"
-          "Summarize these notes..."     → "summarize"
-          "Draft a follow-up email..."   → "email"
-          "What risks do you see..."     → "risk"
-          "Hello, how are you?"          → None (general chat)
-        """
+        """Return one of: 'test_plan', 'triage', 'summary', 'risk', or None."""
         msg = user_message.lower()
-        
-        # TODO: Add keyword detection for each skill
-        # if any(word in msg for word in ["agenda", "prepare", "plan meeting"]):
-        #     return "agenda"
+
+        # TODO: Implement keyword-based skill detection (4 points)
+        #
+        # Examples:
+        #   "test plan", "test cases for", "coverage for"  → "test_plan"
+        #   "bug:", "crash", "stack trace", "triage"       → "triage"
+        #   "passed", "failed", "test run", "summarize"    → "summary"
+        #   "risk", "release readiness", "go/no-go"        → "risk"
+        #
+        # if any(kw in msg for kw in ["test plan", "coverage for", "test cases for"]):
+        #     return "test_plan"
         # elif ...
-        #     return "summarize"
-        # elif ...
-        #     return "email"
-        # elif ...
-        #     return "risk"
-        
-        return None  # General conversation (no specific skill)
-    
-    
+        return None
+
+    # ------------------------------------------------------------
     def chat(self, user_message):
-        """
-        Process a user message: detect skill, route, and respond.
-        
-        TODO: Implement the chat method (4 points)
-        
-        Steps:
-          1. Detect which skill to use
-          2. If a skill is detected:
-             - Build a messages list with the SKILL prompt as system
-             - Include recent conversation context
-             - Make the API call with the skill prompt
-          3. If no skill detected:
-             - Use the regular conversation (self.history)
-             - Make a normal API call
-          4. Save the exchange to self.history (for memory!)
-          5. Return the assistant's response
-        
-        HINT: For skill-based calls, you want to temporarily use the
-              skill-specific system prompt, but still include context
-              from self.history so the AI knows what was discussed.
-        """
-        
-        # Detect skill
+        """Process a user turn: detect skill → call model → remember."""
+
         skill = self.detect_skill(user_message)
-        
+
         if skill:
-            print(f"   🔧 [Using skill: {skill.upper()}]")
+            print(f"   🔧 [{skill}]")
             self.skills_used.append(skill)
-            
-            # TODO: Build skill-specific messages
-            # Include the skill system prompt + conversation context + new message
-            # 
-            # skill_messages = [
-            #     {"role": "system", "content": SKILL_PROMPTS[skill]},
-            #     # Include last few messages from self.history for context
-            #     # (skip the system message at index 0)
-            #     ...
-            #     {"role": "user", "content": user_message}
-            # ]
-            # 
+
+            # TODO: Build skill-specific messages.
+            # Include the skill prompt as system, then the last
+            # few turns of self.history (skip the original system
+            # message), then this user message.
+            #
+            # context = [m for m in self.history[1:][-6:]]  # last 6 turns
+            # skill_messages = (
+            #     [{"role": "system", "content": SKILL_PROMPTS[skill]}]
+            #     + context
+            #     + [{"role": "user", "content": user_message}]
+            # )
+            #
             # response = self.client.chat.completions.create(
             #     model=self.model,
             #     messages=skill_messages,
-            #     max_completion_tokens=500
+            #     temperature=0.3,
+            #     max_tokens=700,
             # )
-            # 
-            # assistant_reply = response.choices[0].message.content
-            
-            assistant_reply = "TODO: Implement skill-based response"
+            # reply = response.choices[0].message.content
+
+            reply = "TODO: implement skill-based response"
         else:
-            # TODO: Handle general conversation
-            # self.history.append({"role": "user", "content": user_message})
-            # 
-            # response = self.client.chat.completions.create(
-            #     model=self.model,
-            #     messages=self.history,
-            #     max_completion_tokens=300
-            # )
-            # 
-            # assistant_reply = response.choices[0].message.content
-            
-            assistant_reply = "TODO: Implement general chat response"
-        
-        # TODO: Save to history (for memory across turns)
+            # General chat — use the regular history
+            self.history.append({"role": "user", "content": user_message})
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=self.history,
+                temperature=0.5,
+                max_tokens=400,
+            )
+            reply = response.choices[0].message.content
+
+            # remove the user msg we just appended; we'll re-append
+            # below alongside the assistant reply for consistency
+            self.history.pop()
+
+        # TODO: Save BOTH user and assistant messages to history
         # self.history.append({"role": "user", "content": user_message})
-        # self.history.append({"role": "assistant", "content": assistant_reply})
-        
-        return assistant_reply
-    
-    
-    def get_stats(self):
-        """Show agent usage statistics."""
-        total_messages = len(self.history) - 1  # exclude system prompt
-        print(f"\n📊 Agent Stats:")
-        print(f"   Total messages: {total_messages}")
-        print(f"   Skills used: {', '.join(self.skills_used) if self.skills_used else 'None yet'}")
-        unique_skills = set(self.skills_used)
-        print(f"   Unique skills: {len(unique_skills)}/4")
+        # self.history.append({"role": "assistant", "content": reply})
+
+        return reply
+
+    # ------------------------------------------------------------
+    def stats(self):
+        total = len(self.history) - 1  # exclude initial system prompt
+        unique = sorted(set(self.skills_used))
+        print("\n📊 Agent Stats")
+        print(f"   Total messages: {total}")
+        print(f"   Skills used:    {self.skills_used or '—'}")
+        print(f"   Unique skills:  {len(unique)}/4 ({', '.join(unique) or '—'})")
 
 
 # ============================================================
-# TASK 3: Test the Agent (3 points)
+# TASK 3: Drive the agent through a realistic test (3 points)
 # ============================================================
 # TODO: Uncomment the test conversation below once you've
-#       completed Tasks 1 and 2. Verify each message uses
-#       the correct skill.
+#       finished Tasks 1 and 2. Watch the [skill] tags fire.
 # ============================================================
 
-# Create the agent
-agent = ProjectManagerAgent(client, deployment)
-print(f"\n✅ {agent.name} is ready!")
-print("=" * 60)
+agent = QAAgent(client, model)
+print(f"\n✅ {agent.name} is ready!\n")
 
-# --- Test Conversation ---
-
-# TODO: Uncomment this test conversation:
-
-# # Message 1: General greeting (should use NO skill)
-# print("\n👤 You: Hi! I'm managing a new e-commerce project.")
-# response = agent.chat("Hi! I'm managing a new e-commerce project with a team of 6. We launch in 8 weeks.")
-# print(f"\n🤖 PM Agent:\n{response}")
-# print("\n" + "-" * 40)
-# 
-# # Message 2: Agenda request (should use AGENDA skill)
-# print("\n👤 You: Create an agenda for our kickoff meeting tomorrow. 1 hour, 6 people.")
-# response = agent.chat("Create an agenda for our kickoff meeting tomorrow. 1 hour, 6 people.")
-# print(f"\n🤖 PM Agent:\n{response}")
-# print("\n" + "-" * 40)
-# 
-# # Message 3: Meeting notes (should use SUMMARIZE skill)
-# meeting_notes = """Here are the notes from today's standup:
-# - Frontend team completed the login page, starting on product catalog
-# - Backend API is behind schedule, need 3 extra days for payment integration
-# - Design team waiting on brand assets from marketing (blocked)
-# - QA found 12 bugs in the last sprint, 4 are critical
-# - Marketing wants to add a referral feature (scope creep?)
-# """
-# print(f"\n👤 You: Summarize these meeting notes:\n{meeting_notes}")
-# response = agent.chat(f"Summarize these meeting notes and extract action items:\n{meeting_notes}")
-# print(f"\n🤖 PM Agent:\n{response}")
-# print("\n" + "-" * 40)
-# 
-# # Message 4: Risk analysis (should use RISK skill)
-# print("\n👤 You: What risks do you see based on everything we discussed?")
-# response = agent.chat("What risks do you see based on everything we discussed so far?")
-# print(f"\n🤖 PM Agent:\n{response}")
-# print("\n" + "-" * 40)
-# 
-# # Message 5: Email draft (should use EMAIL skill)
-# print("\n👤 You: Draft a follow-up email to the team about today's standup.")
-# response = agent.chat("Draft a follow-up email to the team summarizing today's standup results and the risks we identified.")
-# print(f"\n🤖 PM Agent:\n{response}")
-# print("\n" + "-" * 40)
-# 
-# # Message 6: Memory test (should remember everything!)
-# print("\n👤 You: How many weeks do we have until launch?")
-# response = agent.chat("How many weeks do we have until launch? And what's our biggest risk?")
-# print(f"\n🤖 PM Agent:\n{response}")
-# 
-# # Show stats
-# agent.get_stats()
-
-
-# ============================================================
-# BONUS TASK: Add a "priority matrix" skill (3 points)
-# ============================================================
-# TODO: Add a 5th skill that creates an Eisenhower Priority
-#       Matrix (Urgent+Important, Important, Urgent, Neither)
-#       from the action items discussed in the conversation.
+# turns = [
+#     "Write a test plan for the new password reset flow on web.",
+#     "Bug: on iPhone 13 the login button is unresponsive when keyboard is open.",
+#     "Summarize this test run: 28 passed, 5 failed (login=2, cart=2, checkout=1), 2 skipped.",
+#     "Given everything above, what risks do you see for tomorrow's release?",
+# ]
 #
-# Steps:
-#   1. Add "priority" to SKILL_PROMPTS with a good prompt
-#   2. Add detection keywords in detect_skill()
-#   3. Test with: "Prioritize all the action items we discussed"
-# ============================================================
-
-
-# ============================================================
-# BONUS TASK 2: Conversation export (2 points)
-# ============================================================
-# TODO: Add a method to the agent that exports the full
-#       conversation to a formatted text file.
+# for t in turns:
+#     print(f"\n👤 You: {t}")
+#     print(f"\n🤖 Agent:\n{agent.chat(t)}\n")
+#     print("─" * 60)
 #
-# def export_conversation(self, filename="meeting_log.txt"):
-#     with open(filename, "w") as f:
-#         for msg in self.history:
-#             if msg["role"] != "system":
-#                 f.write(f"[{msg['role'].upper()}]\n{msg['content']}\n\n")
-#     print(f"📁 Conversation exported to {filename}")
-# ============================================================
-
-
-print("\n" + "=" * 60)
-print("💡 CONCEPTS USED IN THIS LAB")
-print("=" * 60)
-print("""
-   🤖 Agent architecture → Class with memory + skills
-   🧠 Conversation memory → self.history list persists context
-   🔧 Skill routing      → Detect intent → pick right prompt
-   📝 Prompt engineering  → Different system prompts per skill
-   🔗 Context passing     → Skills receive conversation history
-   📊 State tracking      → skills_used, message_count
-   
-   This is how REAL AI agents work:
-   detect intent → route to skill → generate with context → remember
-   
-   🏆 CHALLENGE: Can you get the agent to use all 4 skills
-      in a single conversation and have it remember everything?
-""")
+# agent.stats()

@@ -1,63 +1,47 @@
 """
-lab_easy_contact_book_short.py - Team Contact Book Lab (Condensed)
+test_case_catalog_short.py — Assignment 1 (Condensed)
 Pure Python — no API calls. Practice dicts, lists, loops, functions.
 """
 
-print("🧪 LAB: Team Contact Book\n")
+print("🧪 ASSIGNMENT 1: Test Case Catalog\n")
 
-# TASK 1: Create team members as dictionaries
-member1 = {"name": "Sarah Chen", "role": "Project Manager", "email": "sarah@company.com", "is_available": True}
+# TASK 1: Model a test case
+tc1 = {"id": "TC-001", "title": "Login with valid creds",
+       "module": "login", "priority": "High",
+       "status": "pass", "automated": True}
 
-# TODO: Create 3 more members
-# member2 = {"name": "...", "role": "Developer", "email": "...", "is_available": True}
-# member3 = {"name": "...", "role": "Designer", "email": "...", "is_available": False}
-# member4 = {"name": "...", "role": "Developer", "email": "...", "is_available": True}
-
-
-# TASK 2: Store all members in a list
-# team = [member1, member2, member3, member4]
+# TODO: Create tc2..tc5 covering different modules / statuses
 
 
-# TASK 3: Display the roster
-def display_roster(team):
-    print(f"📇 TEAM ROSTER ({len(team)} members)")
-    # TODO: Loop through team and print each member
-    # for i, member in enumerate(team):
-    #     status = "✅" if member["is_available"] else "❌"
-    #     print(f"  {i+1}. {member['name']} — {member['role']} | {member['email']} {status}")
-    pass
+# TASK 2: Build the catalog list
+# catalog = [tc1, tc2, tc3, tc4, tc5]
 
 
-# TASK 4: Search by role
-def search_by_role(team, search_term):
-    results = []
-    # TODO: Find members whose role contains search_term
-    # for member in team:
-    #     if search_term.lower() in member["role"].lower():
-    #         results.append(member)
-    return results
+# TASK 3: Display
+def display_catalog(catalog):
+    print(f"📋 CATALOG ({len(catalog)} cases)")
+    # TODO: loop + print  with icons {"pass":"✅","fail":"❌","skip":"⏭"}
 
 
-# TASK 5: Count members per role
-def role_summary(team):
+# TASK 4: Filter by module
+def cases_in_module(catalog, module_name):
+    return [tc for tc in catalog if tc["module"].lower() == module_name.lower()]
+
+
+# TASK 5: Status summary + pass rate
+def status_summary(catalog):
     summary = {}
-    # TODO: Count each role
-    # for member in team:
-    #     role = member["role"]
-    #     if role in summary:
-    #         summary[role] += 1
-    #     else:
-    #         summary[role] = 1
+    # TODO: summary[tc["status"]] = summary.get(tc["status"], 0) + 1
     return summary
 
 
-# TASK 6: Uncomment to test
-# display_roster(team)
-#
-# print("\n🔍 Searching for 'dev'...")
-# for d in search_by_role(team, "dev"):
-#     print(f"  Found: {d['name']} ({d['role']})")
-#
-# print("\n📊 Role Summary:")
-# for role, count in role_summary(team).items():
-#     print(f"  {role}: {count}")
+def pass_rate(catalog):
+    # TODO: passes / (passes + fails) * 100
+    return 0.0
+
+
+# TASK 6: Uncomment once everything above is filled in
+# display_catalog(catalog)
+# print(f"\n🔍 login cases: {len(cases_in_module(catalog, 'login'))}")
+# print(f"📊 {status_summary(catalog)}")
+# print(f"📈 Pass rate: {pass_rate(catalog):.1f}%")

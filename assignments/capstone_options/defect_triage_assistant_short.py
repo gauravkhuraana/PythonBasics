@@ -1,67 +1,41 @@
 """
-05_meeting_assistant_agent_short.py - AI Personal Assistant Agent (Condensed)
-Agent class with built-in conversation memory
+defect_triage_assistant_short.py — Capstone (Condensed)
+Interactive defect triage with cross-bug memory on local LLM.
 """
 
 import os
 from dotenv import load_dotenv
-from openai import AzureOpenAI
-from azure.identity import DefaultAzureCredential, get_bearer_token_provider
+from openai import OpenAI
 
 load_dotenv()
-
-credential = DefaultAzureCredential()
-token_provider = get_bearer_token_provider(
-    credential, "https://cognitiveservices.azure.com/.default"
+client = OpenAI(
+    base_url=os.getenv("LOCAL_LLM_BASE_URL", "http://localhost:1234/v1"),
+    api_key="lm-studio",
 )
+model = os.getenv("LOCAL_LLM_MODEL", "local-model")
 
-client = AzureOpenAI(
-    azure_ad_token_provider=token_provider,
-    api_version="2024-12-01-preview",
-    azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT")
-)
-deployment = os.getenv("AZURE_OPENAI_DEPLOYMENT_NAME")
+SYSTEM = ("You are a senior triage SDET. For each bug, output markdown with: "
+          "Severity (Critical/High/Medium/Low + reason), Owner area, "
+          "Duplicate likelihood (reference prior BUG-N if any), "
+          "2-3 clarifying questions, and suggested next step.")
 
+history = [{"role": "system", "content": SYSTEM}]
+seen = []
 
-# --- The Agent class: handles memory automatically ---
-class PersonalAssistant:
-    def __init__(self, client, deployment, system_prompt):
-        self.client = client
-        self.deployment = deployment
-        self.history = [
-            {"role": "system", "content": system_prompt}
-        ]
-
-    def chat(self, user_message):
-        self.history.append({"role": "user", "content": user_message})
-
-        response_object = self.client.chat.completions.create(
-            model=self.deployment,
-            messages=self.history,
-            max_completion_tokens=500
-        )
-
-        response = response_object.choices[0].message.content
-        self.history.append({"role": "assistant", "content": response})
-        return response
-
-
-# --- Interactive conversation ---
-print("Enter a system prompt (defines the AI's role/personality):")
-system_prompt = input("📝 System Prompt: ")
-
-agent = PersonalAssistant(client, deployment, system_prompt)
-print("\n--- Personal Assistant (type 'quit' to stop) ---\n")
-
+print("Paste a bug (one per line), 'quit' to exit.")
 while True:
-    user_input = input("👤 You: ")
-    if user_input.lower() == "quit":
+    raw = input("\n📝 > ").strip()
+    if not raw or raw.lower() in {"quit", "exit", "q"}:
         break
 
-    response = agent.chat(user_input)
-    print(f"🤖 Assistant: {response}\n")
-
-print(f"\n📊 Messages in memory: {len(agent.history) - 1}")
-print("   Agent remembered everything — no manual history management!")
-
-print("\n✅ Session complete!")
+    bug_id = f"BUG-{len(seen) + 1}"
+    seen.append(bug_id)
+    prior = ", ".join(seen[:-1]) or "(none)"
+    history.append({"role": "user",
+                    "content": f"New bug {bug_id}. Prior IDs: {prior}.\n{raw}"})
+    r = client.chat.completions.create(
+        model=model, messages=history, temperature=0.2, max_tokens=500,
+    )
+    reply = r.choices[0].message.content
+    history.append({"role": "assistant", "content": reply})
+    print(f"\n🤖 {bug_id}:\n{reply}")

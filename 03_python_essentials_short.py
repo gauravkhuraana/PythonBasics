@@ -1,6 +1,6 @@
 """
-01_python_fundamentals_short.py - Python Basics (Condensed)
-Variables, Types, Lists, Dictionaries
+03_python_essentials_short.py — Python Essentials (Condensed)
+Variables, Types, Lists, Dictionaries.
 """
 
 # --- Variables & Data Types ---
@@ -35,17 +35,17 @@ print("\n--- Dictionaries ---")
 print(f"user_message: {user_message}")
 print(f"role: {user_message['role']}, content: {user_message['content']}")
 
-# --- THE KEY PATTERN: List of Dicts (Azure OpenAI format) ---
+# --- THE KEY PATTERN: List of Dicts (LLM chat message format) ---
 conversation = [
-    {"role": "system", "content": "You are a helpful meeting assistant."},
+    {"role": "system", "content": "You are a helpful assistant."},
     {"role": "user", "content": "Here are my notes: discussed Q1 goals."},
     {"role": "assistant", "content": "I see you discussed Q1 goals. Want action items?"},
     {"role": "user", "content": "Yes please!"}
 ]
 
-print("\n--- Azure OpenAI Message Format (List of Dicts) ---")
+print("\n--- LLM Chat Message Format (List of Dicts) ---")
 for msg in conversation:
     emoji = {"system": "⚙️", "user": "👤", "assistant": "🤖"}[msg["role"]]
     print(f"  {emoji} {msg['role'].upper()}: {msg['content']}")
 
-print("\n✅ Next: python 02_environment_setup_short.py")
+print("\n✅ Next: python 04_project_setup_short.py")

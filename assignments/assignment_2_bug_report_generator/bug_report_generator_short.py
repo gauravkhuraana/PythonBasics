@@ -1,65 +1,64 @@
 """
-lab_medium_email_generator_short.py - Email Draft Generator Lab (Condensed)
-Uses Azure OpenAI to generate emails from parameters.
+bug_report_generator_short.py — Assignment 2 (Condensed)
+Turn rough bug notes into a polished bug report using your local LLM.
 """
 
 import os
 from dotenv import load_dotenv
+from openai import OpenAI
 
 load_dotenv()
+client = OpenAI(
+    base_url=os.getenv("LOCAL_LLM_BASE_URL", "http://localhost:1234/v1"),
+    api_key="lm-studio",
+)
+model = os.getenv("LOCAL_LLM_MODEL", "local-model")
 
-# TASK 1: Set up the Azure OpenAI client
-# TODO: Uncomment and complete
-# from openai import AzureOpenAI
-# from azure.identity import DefaultAzureCredential, get_bearer_token_provider
-#
-# credential = DefaultAzureCredential()
-# token_provider = get_bearer_token_provider(credential, "https://cognitiveservices.azure.com/.default")
-#
-# client = AzureOpenAI(
-#     azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
-#     azure_ad_token_provider=token_provider,
-#     api_version="2024-12-01-preview"
-# )
-# deployment = os.getenv("AZURE_OPENAI_DEPLOYMENT_NAME")
-
-print("🧪 LAB: Email Draft Generator\n")
-
-# TASK 2: Email parameters
-recipient = "Sarah"
-purpose = "Follow up after project kickoff meeting"
-tone = "professional"
-key_points = [
-    "Thank her for attending the meeting",
-    "Recap the 3 main decisions we made",
-    "Remind about the next meeting on Friday"
+# --- bug inputs ---
+bug_summary   = "App crashes on login when email contains a + alias on iOS"
+severity_hint = "High"
+environment   = {"platform": "iOS 17.4", "device": "iPhone 13", "build": "4.21.0"}
+repro_steps   = [
+    "Open the app",
+    "Tap Sign in",
+    "Enter gaurav+test@example.com as email",
+    "Enter password and tap Login",
 ]
+expected = "User is signed in."
+actual   = "App crashes immediately."
 
-# TASK 3: Write a system prompt
-# TODO: Replace with a proper email assistant prompt
-system_prompt = "You are a helpful assistant."
+# --- TODO: write a strong system prompt for a senior QA engineer ---
+system_prompt = (
+    "You are a senior QA engineer who writes crisp bug reports for developers. "
+    "Output markdown with sections: Title, Severity, Environment, "
+    "Steps to Reproduce, Expected, Actual, Notes. "
+    "Title format: [Platform][Area] short imperative description."
+)
 
-# TASK 4: Build the user message
-# TODO: Combine parameters into a prompt
-# points_text = "\n".join(f"- {point}" for point in key_points)
-# user_message = f"""Write an email to {recipient} about {purpose}.
-# Tone: {tone}
-# Key points:
-# {points_text}"""
+steps_text = "\n".join(f"{i}. {s}" for i, s in enumerate(repro_steps, 1))
+env_text   = "\n".join(f"- {k}: {v}" for k, v in environment.items())
 
-# TASK 5: Make the API call
-# TODO: Uncomment when ready
-# messages = [
-#     {"role": "system", "content": system_prompt},
-#     {"role": "user", "content": user_message}
-# ]
-#
-# response = client.chat.completions.create(
-#     model=deployment,
-#     messages=messages,
-#     max_completion_tokens=400
-# )
-#
-# print("📧 Email Draft:")
-# print(response.choices[0].message.content)
-# print(f"\n📊 Tokens used: {response.usage.total_tokens}")
+user_message = f"""Bug summary: {bug_summary}
+Tester-suggested severity: {severity_hint}
+
+Environment:
+{env_text}
+
+Steps to reproduce:
+{steps_text}
+
+Expected: {expected}
+Actual:   {actual}
+"""
+
+response = client.chat.completions.create(
+    model=model,
+    messages=[
+        {"role": "system", "content": system_prompt},
+        {"role": "user",   "content": user_message},
+    ],
+    temperature=0.3,
+    max_tokens=600,
+)
+
+print(response.choices[0].message.content)

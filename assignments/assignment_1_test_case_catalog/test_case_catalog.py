@@ -1,21 +1,21 @@
 """
 ================================================================
-🧪 LAB ASSIGNMENT 1 — EASY LEVEL
-   Build a Team Contact Book (Python Only)
+🧪 ASSIGNMENT 1 — EASY LEVEL
+   Build a Test Case Catalog (Pure Python — no API calls)
 ================================================================
 
 ⏱️  Estimated time: 15-20 minutes
-🎯  Difficulty: ⭐ Easy (No API calls — pure Python!)
+🎯  Difficulty: ⭐ Easy
 
 SCENARIO:
-   You're organizing a project team. Build a contact book that
-   stores team members and their roles, and can display, search,
-   and summarize the team.
+   You're an SDET on a team that's been keeping test cases in
+   a giant spreadsheet. Build a small Python catalog that stores
+   test cases, lists them by module, searches them, and gives a
+   pass/fail summary.
 
-SKILLS TESTED (from File 01):
+SKILLS TESTED (from Video 3):
    ✅ Variables and data types (str, int, bool)
-   ✅ Lists — ordered collections
-   ✅ Dictionaries — key-value pairs
+   ✅ Lists and dictionaries
    ✅ Loops and f-strings
    ✅ Functions
 
@@ -23,176 +23,179 @@ SKILLS TESTED (from File 01):
 📋 INSTRUCTIONS — Complete the TODOs below!
 ================================================================
 
-Run when done:  python lab_easy_contact_book.py
+Run when done:  python test_case_catalog.py
 
 EXPECTED OUTPUT (example):
-   📇 TEAM ROSTER (4 members)
-   ──────────────────────────
-   1. Sarah Chen — Project Manager | sarah@company.com
-   2. John Park — Developer       | john@company.com
-   ...
-   🔍 Search results for "dev": John Park (Developer)
-   📊 Role Summary: 1 Project Manager, 2 Developers, 1 Designer
+   📋 TEST CASE CATALOG (5 cases)
+   ──────────────────────────────
+   1. [TC-001] Login with valid creds        | login    | High   | ✅ pass
+   2. [TC-002] Login with invalid creds      | login    | High   | ❌ fail
+   3. [TC-003] Reset password email          | login    | Medium | ⏭ skip
+   4. [TC-101] Add item to cart              | cart     | High   | ✅ pass
+   5. [TC-102] Remove last item from cart    | cart     | Medium | ❌ fail
 
+   🔍 Cases in module 'login': 3
+   📊 Status summary: pass=2, fail=2, skip=1
+   📈 Pass rate: 40.0%
 ================================================================
 """
 
 print("=" * 60)
-print("🧪 LAB: Team Contact Book")
+print("🧪 ASSIGNMENT 1: Test Case Catalog")
 print("=" * 60)
 
 
 # ============================================================
-# TASK 1: Create team members as dictionaries (3 points)
+# TASK 1: Model a single test case as a dictionary (3 points)
 # ============================================================
-# Each member should have: name (str), role (str), 
-#                          email (str), is_available (bool)
+# A test case has these fields:
+#   id            (str)   — e.g., "TC-001"
+#   title         (str)   — short description of what's tested
+#   module        (str)   — e.g., "login", "cart", "checkout"
+#   priority      (str)   — "High" / "Medium" / "Low"
+#   status        (str)   — "pass" / "fail" / "skip"
+#   automated     (bool)  — True if it's covered by automation
 #
-# TODO: Create at least 4 team member dictionaries
-# HINT: Use the same pattern as Azure OpenAI messages!
-#       member = {"key": "value", "key": "value"}
+# TODO: Create AT LEAST 5 test case dictionaries.
+# HINT: Same dict pattern you'll use later for LLM messages —
+#       {"key": "value", ...}
 # ============================================================
 
 # Example (first one is done for you):
-member1 = {
-    "name": "Sarah Chen",
-    "role": "Project Manager",
-    "email": "sarah@company.com",
-    "is_available": True
+tc1 = {
+    "id":        "TC-001",
+    "title":     "Login with valid creds",
+    "module":    "login",
+    "priority":  "High",
+    "status":    "pass",
+    "automated": True,
 }
 
-# TODO: Create member2 (a Developer)
-# member2 = ...
+# TODO: Create tc2 (login, fails)
+# tc2 = ...
 
-# TODO: Create member3 (a Designer)
-# member3 = ...
+# TODO: Create tc3 (login, skipped)
+# tc3 = ...
 
-# TODO: Create member4 (another Developer)
-# member4 = ...
+# TODO: Create tc4 (cart, passes)
+# tc4 = ...
 
-
-# ============================================================
-# TASK 2: Store all members in a list (2 points)
-# ============================================================
-# TODO: Create a list called 'team' containing all 4 members
-# HINT: This is the same pattern as a conversation message list!
-#       team = [member1, member2, ...]
-# ============================================================
-
-# team = ...
+# TODO: Create tc5 (cart, fails)
+# tc5 = ...
 
 
 # ============================================================
-# TASK 3: Display the team roster (3 points)
+# TASK 2: Store all test cases in a list (2 points)
 # ============================================================
-# TODO: Write a function that prints each team member nicely
-# 
-# Expected output for each member:
-#   1. Sarah Chen — Project Manager | sarah@company.com ✅
-#   (✅ if available, ❌ if not)
+# TODO: Create a list called 'catalog' containing all your
+#       test case dicts.
+# ============================================================
+
+# catalog = [tc1, tc2, tc3, tc4, tc5]
+
+
+# ============================================================
+# TASK 3: Display the catalog (3 points)
+# ============================================================
+# Expected line per case:
+#   1. [TC-001] Login with valid creds        | login    | High   | ✅ pass
+# Use:  ✅ for pass, ❌ for fail, ⏭ for skip.
 #
-# HINT: Use enumerate() and f-strings
-#       for i, member in enumerate(team):
-#           print(f"   {i+1}. {member['name']} ...")
+# HINT: f-strings + .ljust() for column alignment, e.g.
+#   f"{tc['title']:<35}"  (left-pad title to 35 chars)
 # ============================================================
 
-def display_roster(team):
-    """Display all team members in a formatted list."""
-    print(f"\n📇 TEAM ROSTER ({len(team)} members)")
-    print("─" * 40)
-    
-    # TODO: Loop through team and print each member
-    # Use ✅ for available members, ❌ for unavailable
+def display_catalog(catalog):
+    """Print every test case as a numbered, aligned row."""
+    print(f"\n📋 TEST CASE CATALOG ({len(catalog)} cases)")
+    print("─" * 70)
+
+    # TODO: Loop through and print each case.
+    # for i, tc in enumerate(catalog, start=1):
+    #     icon = {"pass": "✅", "fail": "❌", "skip": "⏭"}[tc["status"]]
+    #     print(f"  {i}. [{tc['id']}] {tc['title']:<35} | "
+    #           f"{tc['module']:<8} | {tc['priority']:<6} | {icon} {tc['status']}")
     pass
 
 
 # ============================================================
-# TASK 4: Search by role (3 points)
+# TASK 4: Filter by module (3 points)
 # ============================================================
-# TODO: Write a function that finds members by role keyword
-#
-# Example: search_by_role(team, "dev") → finds all Developers
-#
-# HINT: Use .lower() to make search case-insensitive
-#       if search_term.lower() in member["role"].lower():
+# Return all test cases whose 'module' matches `module_name`
+# (case-insensitive).
 # ============================================================
 
-def search_by_role(team, search_term):
-    """Find team members whose role contains the search term."""
+def cases_in_module(catalog, module_name):
+    """Return a list of test cases whose module equals module_name."""
     results = []
-    
-    # TODO: Loop through team, check if search_term is in role
-    # Append matching members to results list
-    
+    # TODO: append matching cases to results
     return results
 
 
 # ============================================================
-# TASK 5: Generate a role summary (4 points)
+# TASK 5: Status summary + pass rate (4 points)
 # ============================================================
-# TODO: Write a function that counts how many people are in
-#       each role and returns a dictionary
+# Build a dict like {"pass": 2, "fail": 2, "skip": 1}.
+# Then compute the pass rate as a float percent (passes /
+# total runnable, where runnable = pass + fail; skips don't
+# count toward the denominator).
 #
-# Example output: {"Project Manager": 1, "Developer": 2, "Designer": 1}
-#
-# HINT: Create an empty dict, loop through team
-#       if role in summary:
-#           summary[role] += 1
-#       else:
-#           summary[role] = 1
+# HINT:
+#   summary[status] = summary.get(status, 0) + 1
 # ============================================================
 
-def role_summary(team):
-    """Count team members per role. Returns a dict."""
+def status_summary(catalog):
+    """Return a dict of status → count, e.g., {'pass': 2, 'fail': 2}."""
     summary = {}
-    
-    # TODO: Count each role
-    
+    # TODO: count each status
     return summary
 
 
-# ============================================================
-# TASK 6: Put it all together! (2 points)
-# ============================================================
-# TODO: Uncomment and run the code below once you've completed
-#       all the tasks above.
-# ============================================================
-
-# # Display full roster
-# display_roster(team)
-# 
-# # Search for developers
-# print("\n🔍 Searching for 'dev'...")
-# devs = search_by_role(team, "dev")
-# for d in devs:
-#     print(f"   Found: {d['name']} ({d['role']})")
-# 
-# # Show role summary
-# print("\n📊 Role Summary:")
-# for role, count in role_summary(team).items():
-#     print(f"   {role}: {count}")
-# 
-# # Bonus: Count available members
-# available = [m for m in team if m["is_available"]]
-# print(f"\n✅ Available: {len(available)}/{len(team)} members")
+def pass_rate(catalog):
+    """Return the pass percentage (passes / (passes + fails))."""
+    # TODO: compute and return a float (e.g. 40.0)
+    return 0.0
 
 
-print("\n" + "=" * 60)
-print("💡 HINTS & CONNECTION TO AZURE OPENAI")
-print("=" * 60)
-print("""
-   Notice the patterns you used here:
-   
-   📖 Dictionaries → Same as Azure OpenAI message format
-      {"name": "Sarah"}  ↔  {"role": "user", "content": "..."}
-   
-   📋 List of Dicts → Same as conversation history
-      [member1, member2]  ↔  [msg1, msg2, msg3]
-   
-   🔁 Looping + f-strings → Used to process AI responses
-   
-   🔍 Search function → Similar to filtering AI outputs
-   
-   These are the EXACT same building blocks used in
-   Files 03, 04, and 05 to talk to Azure OpenAI!
-""")
+# ============================================================
+# TASK 6: Put it all together (2 points)
+# ============================================================
+# Uncomment the block below once Tasks 1–5 are done.
+# ============================================================
+
+# display_catalog(catalog)
+#
+# print(f"\n🔍 Cases in module 'login': {len(cases_in_module(catalog, 'login'))}")
+#
+# summary = status_summary(catalog)
+# pretty = ", ".join(f"{k}={v}" for k, v in summary.items())
+# print(f"📊 Status summary: {pretty}")
+# print(f"📈 Pass rate: {pass_rate(catalog):.1f}%")
+#
+# # Bonus: how many are automated?
+# automated = [tc for tc in catalog if tc["automated"]]
+# print(f"🤖 Automated: {len(automated)}/{len(catalog)} cases")
+
+
+# ============================================================
+# 💡 WHY THIS MATTERS FOR LATER VIDEOS
+# ============================================================
+# The shape you used here:
+#
+#   catalog = [
+#       {"id": "...", "title": "...", "status": "..."},
+#       {"id": "...", "title": "...", "status": "..."},
+#       ...
+#   ]
+#
+# is the EXACT same shape as an LLM message list:
+#
+#   messages = [
+#       {"role": "system",    "content": "..."},
+#       {"role": "user",      "content": "..."},
+#       {"role": "assistant", "content": "..."},
+#   ]
+#
+# In Assignment 2 you'll send a list-of-dicts like this to a
+# real AI model and get a polished bug report back.
+# ============================================================

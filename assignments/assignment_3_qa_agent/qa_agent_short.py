@@ -1,122 +1,70 @@
 """
-lab_hard_project_manager_agent_short.py - Multi-Skill PM Agent Lab (Condensed)
-Agent with skill routing and conversation memory.
+qa_agent_short.py — Assignment 3 (Condensed)
+A multi-skill QA agent (test plan / triage / summary / risk) on local LLM.
 """
 
 import os
 from dotenv import load_dotenv
-from openai import AzureOpenAI
-from azure.identity import DefaultAzureCredential, get_bearer_token_provider
+from openai import OpenAI
 
 load_dotenv()
-
-credential = DefaultAzureCredential()
-token_provider = get_bearer_token_provider(credential, "https://cognitiveservices.azure.com/.default")
-
-client = AzureOpenAI(
-    azure_ad_token_provider=token_provider,
-    api_version="2024-12-01-preview",
-    azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT")
+client = OpenAI(
+    base_url=os.getenv("LOCAL_LLM_BASE_URL", "http://localhost:1234/v1"),
+    api_key="lm-studio",
 )
-deployment = os.getenv("AZURE_OPENAI_DEPLOYMENT_NAME")
+model = os.getenv("LOCAL_LLM_MODEL", "local-model")
 
-print("🧪 LAB: Multi-Skill Project Manager Agent\n")
-
-# TASK 1: Define skill-specific system prompts
 SKILL_PROMPTS = {
-    "agenda": """You are an expert Meeting Agenda Creator.
-# TODO: Add rules for creating structured, time-boxed agendas
-""",
-    "summarize": """You are an expert Meeting Notes Summarizer.
-# TODO: Add rules for extracting decisions, action items, follow-ups
-""",
-    "email": """You are an expert Follow-Up Email Drafter.
-# TODO: Add rules for writing professional follow-up emails
-""",
-    "risk": """You are an expert Project Risk Analyzer.
-# TODO: Add rules for identifying and categorizing risks
-"""
+    "test_plan": "You are a Senior SDET. Output a markdown test plan with: Scope, Scenarios (title/type/steps/expected), Test data, Automation candidates.",
+    "triage":    "You are a bug triage engineer. Output: severity + reason, owner area, duplicate likelihood, 3 clarifying questions.",
+    "summary":   "You are an SDET. Output: traffic-light headline (green/amber/red), counts + pass rate, top 3 concerns, ship/hold/hotfix recommendation.",
+    "risk":      "You are a release risk analyzer. Output a markdown table: Risk | Category | Likelihood | Impact | Mitigation. Use only prior context.",
 }
 
 
-# TASK 2: Build the agent class
-class ProjectManagerAgent:
+class QAAgent:
     def __init__(self, client, model):
-        self.client = client
-        self.model = model
-        self.history = [
-            {"role": "system", "content": """You are PM Agent, a professional Project Manager AI.
-Detect what the user needs and use the right skill:
-- agenda/meeting prep → agenda skill
-- meeting notes → summarizer skill
-- draft email → email skill
-- risks/concerns → risk analyzer skill
-Be concise, use bullet points, remember full context."""}
-        ]
+        self.client, self.model = client, model
+        self.history = [{"role": "system",
+                         "content": "You are a concise QA/SDET assistant with skills: "
+                                    "test_plan, triage, summary, risk."}]
         self.skills_used = []
 
-    def detect_skill(self, user_message):
-        """Detect which skill to use based on keywords."""
-        msg = user_message.lower()
-        # TODO: Implement keyword detection
-        # if any(word in msg for word in ["agenda", "prepare", "plan meeting"]):
-        #     return "agenda"
-        # elif any(word in msg for word in ["summarize", "notes", "recap"]):
-        #     return "summarize"
-        # elif any(word in msg for word in ["email", "draft", "write to"]):
-        #     return "email"
-        # elif any(word in msg for word in ["risk", "concern", "issue"]):
-        #     return "risk"
+    def detect(self, msg):
+        m = msg.lower()
+        if any(k in m for k in ["test plan", "coverage for", "test cases for"]): return "test_plan"
+        if any(k in m for k in ["bug:", "crash", "stack trace", "triage"]):       return "triage"
+        if any(k in m for k in ["passed", "failed", "test run", "summarize"]):    return "summary"
+        if any(k in m for k in ["risk", "release readiness", "go/no-go"]):        return "risk"
         return None
 
-    def chat(self, user_message):
-        """Process message: detect skill, route, respond, remember."""
-        skill = self.detect_skill(user_message)
-
+    def chat(self, msg):
+        skill = self.detect(msg)
         if skill:
-            print(f"  🔧 [Using skill: {skill.upper()}]")
+            print(f"   🔧 [{skill}]")
             self.skills_used.append(skill)
-            # TODO: Build skill-specific messages with context
-            # skill_messages = [
-            #     {"role": "system", "content": SKILL_PROMPTS[skill]},
-            #     *self.history[1:],  # include conversation context
-            #     {"role": "user", "content": user_message}
-            # ]
-            # response = self.client.chat.completions.create(
-            #     model=self.model, messages=skill_messages, max_completion_tokens=500
-            # )
-            # reply = response.choices[0].message.content
-            reply = "TODO: Implement skill-based response"
+            messages = ([{"role": "system", "content": SKILL_PROMPTS[skill]}]
+                        + self.history[1:][-6:]
+                        + [{"role": "user", "content": msg}])
         else:
-            # TODO: Handle general conversation
-            # self.history.append({"role": "user", "content": user_message})
-            # response = self.client.chat.completions.create(
-            #     model=self.model, messages=self.history, max_completion_tokens=300
-            # )
-            # reply = response.choices[0].message.content
-            reply = "TODO: Implement general chat"
+            messages = self.history + [{"role": "user", "content": msg}]
 
-        # TODO: Save to history for memory
-        # self.history.append({"role": "user", "content": user_message})
-        # self.history.append({"role": "assistant", "content": reply})
+        r = self.client.chat.completions.create(
+            model=self.model, messages=messages,
+            temperature=0.3, max_tokens=700,
+        )
+        reply = r.choices[0].message.content
+        self.history.append({"role": "user", "content": msg})
+        self.history.append({"role": "assistant", "content": reply})
         return reply
 
 
-# TASK 3: Test the agent
-agent = ProjectManagerAgent(client, deployment)
-print(f"✅ PM Agent ready!\n")
+agent = QAAgent(client, model)
 
-# TODO: Uncomment to test
-# print("👤 You: Hi! I'm managing a new e-commerce project, launching in 8 weeks.")
-# print(f"🤖 {agent.chat('Hi! I'm managing a new e-commerce project with a team of 6. We launch in 8 weeks.')}\n")
-#
-# print("👤 You: Create an agenda for our kickoff meeting tomorrow.")
-# print(f"🤖 {agent.chat('Create an agenda for our kickoff meeting tomorrow. 1 hour, 6 people.')}\n")
-#
-# print("👤 You: What risks do you see?")
-# print(f"🤖 {agent.chat('What risks do you see based on everything we discussed?')}\n")
-#
-# print("👤 You: Draft a follow-up email to the team.")
-# print(f"🤖 {agent.chat('Draft a follow-up email to the team.')}\n")
-#
-# agent.get_stats()
+for turn in [
+    "Write a test plan for the new password reset flow on web.",
+    "Bug: on iPhone 13 the login button is unresponsive when keyboard is open.",
+    "Summarize this test run: 28 passed, 5 failed (login=2, cart=2, checkout=1), 2 skipped.",
+    "Given everything above, what risks do you see for tomorrow's release?",
+]:
+    print(f"\n👤 {turn}\n🤖 {agent.chat(turn)}\n" + "─" * 60)

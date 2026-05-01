@@ -1,52 +1,67 @@
 """
 ================================================================
-🧪 LAB ASSIGNMENT 2 — MEDIUM LEVEL
-   Build an Email Draft Generator (Azure OpenAI API)
+🧪 ASSIGNMENT 2 — MEDIUM LEVEL
+   Build a Bug Report Generator (uses your local LLM)
 ================================================================
 
 ⏱️  Estimated time: 20-30 minutes
-🎯  Difficulty: ⭐⭐ Medium (Uses Azure OpenAI API)
+🎯  Difficulty: ⭐⭐ Medium
 
 SCENARIO:
-   You're a busy professional who needs to write emails quickly.
-   Build a tool that takes basic inputs (recipient, purpose, tone)
-   and uses Azure OpenAI to generate a polished email draft.
+   Engineers and testers often capture bug context as a quick
+   one-liner ("login crashes on iPhone with weird email") plus
+   a few rough repro steps. Build a tool that turns those
+   scrappy notes into a polished, consistent bug report that
+   any developer can act on.
 
-SKILLS TESTED (from Files 01-04):
+SKILLS TESTED (from Videos 3-7):
    ✅ Variables, lists, dictionaries
-   ✅ Loading credentials with dotenv
-   ✅ Creating the Azure OpenAI client
+   ✅ Loading config with python-dotenv
+   ✅ Creating an OpenAI-compatible client (LM Studio)
    ✅ Crafting system prompts
-   ✅ Making API calls with messages
-   ✅ Working with the response object
+   ✅ Making chat completion calls
+   ✅ Reading the response object
 
 Prerequisites:
-   - .env file configured with credentials
-   - Virtual environment activated
-   - Packages installed (pip install -r requirements.txt)
-   - Logged in via 'az login'
+   - LM Studio running with a model loaded (Video 5)
+   - .env has LOCAL_LLM_BASE_URL and LOCAL_LLM_MODEL
+   - Virtual environment activated, requirements installed
 
 ================================================================
 📋 INSTRUCTIONS — Complete the TODOs below!
 ================================================================
 
-Run when done:  python lab_medium_email_generator.py
+Run when done:  python bug_report_generator.py
 
 EXPECTED OUTPUT (example):
-   📧 Generating email draft...
+   🐞 Generating bug report...
    ──────────────────────────
-   Subject: Follow-up: Project Kickoff Discussion
-   
-   Hi Sarah,
-   
-   Thank you for taking the time to meet today...
-   ...
-   
-   Best regards,
-   [Your Name]
-   ──────────────────────────
-   📊 Tokens used: 245
+   ## Title
+   [iOS][Auth] App crashes on login when email contains '+' alias
 
+   ## Severity
+   High
+
+   ## Environment
+   - iOS 17.4 / iPhone 13
+   - App build 4.21.0
+
+   ## Steps to Reproduce
+   1. Open the app
+   2. Tap "Sign in"
+   3. Enter `gaurav+test@example.com` as email
+   4. Enter the password and tap Login
+
+   ## Expected
+   User is signed in successfully.
+
+   ## Actual
+   App crashes immediately on tap.
+
+   ## Suggested Severity / Notes
+   Likely a regex issue in the email validator.
+   ──────────────────────────
+   📊 Tokens used: 412
 ================================================================
 """
 
@@ -54,182 +69,134 @@ import os
 from dotenv import load_dotenv
 
 # ============================================================
-# TASK 1: Set up the Azure OpenAI client (3 points)
+# TASK 1: Set up the local LLM client (3 points)
 # ============================================================
-# TODO: Import the required modules and create the client
+# TODO: Import the OpenAI SDK, create the client pointed at
+#       LM Studio's local server, and read the model name.
 #
-# HINT: Look at how 03_azure_openai_simple.py does it!
-#   1. Import AzureOpenAI from openai
-#   2. Import DefaultAzureCredential, get_bearer_token_provider 
-#      from azure.identity
-#   3. Load .env with load_dotenv()
-#   4. Create credential and token_provider
-#   5. Create the client with AzureOpenAI(...)
-#   6. Get the deployment name from environment
+# HINT: Look at how 06_first_local_ai_call.py does it!
+#   from openai import OpenAI
+#   client = OpenAI(base_url=os.getenv("LOCAL_LLM_BASE_URL"),
+#                   api_key="lm-studio")
+#   model = os.getenv("LOCAL_LLM_MODEL")
 # ============================================================
 
 load_dotenv()
 
-# TODO: Import and set up Azure OpenAI client here
-# from openai import AzureOpenAI
-# from azure.identity import DefaultAzureCredential, get_bearer_token_provider
-# 
-# credential = DefaultAzureCredential()
-# token_provider = get_bearer_token_provider(
-#     credential, "https://cognitiveservices.azure.com/.default"
-# )
-# 
-# client = AzureOpenAI(
-#     azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT"),
-#     azure_ad_token_provider=token_provider,
-#     api_version="2024-12-01-preview"
-# )
-# 
-# deployment = os.getenv("AZURE_OPENAI_DEPLOYMENT_NAME")
+# TODO: import + client setup here
 
 print("=" * 60)
-print("🧪 LAB: Email Draft Generator")
+print("🐞 ASSIGNMENT 2: Bug Report Generator")
 print("=" * 60)
 
 
 # ============================================================
-# TASK 2: Define the email parameters (2 points)
+# TASK 2: Define the bug inputs (2 points)
 # ============================================================
-# TODO: Fill in these variables with your own values
+# These are the rough notes a tester would jot down. The AI
+# will turn them into a structured report.
+# TODO: Tweak these to match a real bug you've seen. Add at
+#       least one more repro step.
 # ============================================================
 
-recipient = "Sarah"                        # Who is the email to?
-purpose = "Follow up after project kickoff meeting"  # What's it about?
-tone = "professional"                      # professional / casual / formal
-key_points = [                             # What to include?
-    "Thank her for attending the meeting",
-    "Recap the 3 main decisions we made",
-    "Remind about the next meeting on Friday"
+bug_summary = "App crashes on login when email contains a + alias on iOS"
+severity_hint = "High"
+environment = {
+    "platform": "iOS 17.4",
+    "device":   "iPhone 13",
+    "build":    "4.21.0",
+}
+repro_steps = [
+    "Open the app",
+    "Tap 'Sign in'",
+    "Enter 'gaurav+test@example.com' as email",
+    "Enter password and tap Login",
 ]
+expected = "User is signed in successfully."
+actual   = "App crashes immediately."
 
-# TODO: Add at least one more key point to the list above
+# TODO: add one more repro step above to confirm you've read the data
 
 
 # ============================================================
 # TASK 3: Craft a system prompt (4 points)
 # ============================================================
-# TODO: Write a system prompt that instructs the AI to be an
-#       email writing assistant.
+# TODO: Write a system prompt that instructs the model to be
+#       a senior QA engineer who writes excellent bug reports.
 #
-# Your system prompt should tell the AI:
-#   - What it is (an email drafting assistant)
-#   - Its writing rules (clear, concise, appropriate tone)
-#   - Output format (include Subject line, greeting, body, sign-off)
-#   - Any constraints (keep it under 200 words)
+# Your prompt should mention:
+#   - It is a senior QA / SDET writing for a developer audience
+#   - The required output sections (Title, Severity, Environment,
+#     Steps to Reproduce, Expected, Actual, Notes)
+#   - Title format:  [Platform][Area] short imperative description
+#   - Severity scale: Critical / High / Medium / Low
+#   - Be specific, no fluff, use markdown headings
 #
-# HINT: Look at how system prompts are used in 04_azure_openai_chat.py
+# HINT: Look at how system prompts are used in 07_chat_with_memory.py
 # ============================================================
 
-# TODO: Replace this with your own system prompt
+# TODO: Replace this with your real system prompt
 system_prompt = "You are a helpful assistant."
 
 
 # ============================================================
 # TASK 4: Build the user message (3 points)
 # ============================================================
-# TODO: Create a user message that includes all the email
-#       parameters (recipient, purpose, tone, key_points)
+# TODO: Combine all the bug inputs into one structured user
+#       message the model can work from.
 #
-# HINT: Use an f-string to combine the variables:
-#   user_message = f"""
-#   Write an email to {recipient} about {purpose}.
-#   Tone: {tone}
-#   Key points to cover:
-#   {build the list here}
-#   """
-#
-# TIP: To turn key_points list into readable text:
-#   points_text = "\n".join(f"- {point}" for point in key_points)
+# HINT:
+#   steps_text = "\n".join(f"{i}. {s}" for i, s in enumerate(repro_steps, 1))
+#   env_text   = "\n".join(f"- {k}: {v}" for k, v in environment.items())
+#   user_message = f\"\"\"Bug summary: {bug_summary}
+#   Tester-suggested severity: {severity_hint}
+#   ...
+#   Steps:
+#   {steps_text}
+#   ...
+#   \"\"\"
 # ============================================================
 
-# TODO: Build the user message
-# points_text = "\n".join(f"- {point}" for point in key_points)
-# user_message = f"""..."""
+# TODO: build user_message
 
 
 # ============================================================
-# TASK 5: Make the API call (4 points)
+# TASK 5: Make the API call & print the report (4 points)
 # ============================================================
-# TODO: Build the messages list and call the API
-#
 # Steps:
-#   1. Create messages list with system prompt + user message
-#   2. Call client.chat.completions.create(...)
-#   3. Extract the response text
-#   4. Print the email draft
-#   5. Print token usage
+#   1. messages = [system, user]
+#   2. response = client.chat.completions.create(...)
+#   3. Print response.choices[0].message.content
+#   4. Print response.usage.total_tokens
 #
-# HINT: Use max_completion_tokens (not max_tokens) for this model
-#       messages = [
-#           {"role": "system", "content": system_prompt},
-#           {"role": "user", "content": user_message}
-#       ]
+# Use temperature=0.3 — bug reports should be consistent, not creative.
 # ============================================================
 
-# TODO: Uncomment and complete the API call
-# print("\n📧 Generating email draft...")
+# TODO: uncomment and complete
+# print("\n🐞 Generating bug report...")
 # print("─" * 40)
-# 
-# messages = [
-#     {"role": "system", "content": system_prompt},
-#     {"role": "user", "content": user_message}
-# ]
-# 
+#
 # response = client.chat.completions.create(
-#     model=deployment,
-#     messages=messages,
-#     max_completion_tokens=400
+#     model=model,
+#     messages=[
+#         {"role": "system", "content": system_prompt},
+#         {"role": "user",   "content": user_message},
+#     ],
+#     temperature=0.3,
+#     max_tokens=600,
 # )
-# 
-# # Extract and print the email
-# email_draft = response.choices[0].message.content
-# print(email_draft)
+#
+# print(response.choices[0].message.content)
 # print("─" * 40)
-# print(f"📊 Tokens used: {response.usage.total_tokens}")
+# if response.usage:
+#     print(f"📊 Tokens used: {response.usage.total_tokens}")
 
 
 # ============================================================
-# BONUS TASK: Generate multiple tones (3 points)
+# BONUS TASK: Try multiple severity hints (3 points)
 # ============================================================
-# TODO: Loop through different tones and generate an email
-#       for each one. Compare how the AI adjusts its writing!
-#
-# tones = ["professional", "casual", "formal"]
-# for tone in tones:
-#     # Rebuild user_message with new tone
-#     # Make API call
-#     # Print result with tone label
-#     pass
+# TODO: Loop through ["Low", "Medium", "High", "Critical"] as
+#       severity_hint and regenerate the report. Compare how
+#       (or whether) the model adjusts its tone and severity
+#       choice. This is a great prompt-engineering exercise.
 # ============================================================
-
-
-# ============================================================
-# BONUS TASK 2: Add error handling (2 points)
-# ============================================================
-# TODO: Wrap the API call in a try/except block
-#       Handle at least these errors:
-#       - Missing credentials (check before calling)
-#       - API errors (catch openai exceptions)
-#
-# HINT: Look at how 03_azure_openai_simple.py handles errors
-# ============================================================
-
-
-print("\n" + "=" * 60)
-print("💡 CONCEPTS USED IN THIS LAB")
-print("=" * 60)
-print("""
-   📝 System prompts → Control AI behavior & output format
-   📋 Message format  → [{"role": "...", "content": "..."}]
-   🔧 f-strings      → Build dynamic prompts from variables
-   📊 Token usage     → Understand API cost
-   🔐 Credentials     → Secure access with DefaultAzureCredential
-   
-   This is the SAME pattern used in real-world apps:
-   user input → build prompt → call API → show result
-""")
