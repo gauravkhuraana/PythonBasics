@@ -103,10 +103,11 @@ azure-identity  — Azure AD auth (only for the Video 10 bonus)
 
 ## 📬 Connect
 
+- � Website: <https://gauravkhurana.com>
 - 🎥 Find this course on Udemy: *(link in course description)*
 - 💬 Topmate for 1:1 review of your capstone: *(link in course description)*
 - ⭐ If this helped you, star the repo so you can find it later.
 
 ---
 
-Made by Gaurav. See you in [Video 1](01_what_is_python_README.md). 🚀
+Made by Gaurav ([gauravkhurana.com](https://gauravkhurana.com)). See you in [Video 1](01_what_is_python_README.md). 🚀

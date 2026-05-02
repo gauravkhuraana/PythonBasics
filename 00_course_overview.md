@@ -114,4 +114,10 @@ PythonBasics/
 
 ---
 
+## 📬 Author
+
+Made by Gaurav — <https://gauravkhurana.com>
+
+---
+
 Ready? Open [Video 1's README](01_what_is_python_README.md) and let's go. 🚀
