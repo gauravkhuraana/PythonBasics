@@ -15,11 +15,11 @@ client = OpenAI(
 model = os.getenv("LOCAL_LLM_MODEL", "local-model")
 
 messages = [
-    {"role": "system", "content": "You are a concise Python tutor."},
-    {"role": "user",   "content": "What's a list comprehension?"},
+    {"role": "system", "content": "You are a SDET tutor."},
+    {"role": "user",   "content": "What libraries can be used for UI Automation?"},
 ]
 
-for follow_up in ["Show me one that filters even numbers.",
+for follow_up in ["Show me the one which can do API Testing as well ",
                   "What was my first question?"]:
     r = client.chat.completions.create(model=model, messages=messages,
                                        max_tokens=200, temperature=0.4)

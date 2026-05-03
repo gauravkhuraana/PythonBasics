@@ -5,22 +5,15 @@ The Grand Finale: Everything from this session in one program
 
 import os
 from dotenv import load_dotenv
-from openai import AzureOpenAI
-from azure.identity import DefaultAzureCredential, get_bearer_token_provider
+from openai import OpenAI
 
 load_dotenv()
 
-credential = DefaultAzureCredential()
-token_provider = get_bearer_token_provider(
-    credential, "https://cognitiveservices.azure.com/.default"
+client = OpenAI(
+    base_url=os.getenv("LOCAL_LLM_BASE_URL", "http://localhost:1234/v1"),
+    api_key="lm-studio",  # local server ignores the value
 )
-
-client = AzureOpenAI(
-    azure_ad_token_provider=token_provider,
-    api_version="2024-12-01-preview",
-    azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT")
-)
-deployment = os.getenv("AZURE_OPENAI_DEPLOYMENT_NAME")
+model = os.getenv("LOCAL_LLM_MODEL", "local-model")
 
 
 # --- Life categories with expert system prompts ---
@@ -86,9 +79,9 @@ categories = {
 
 # --- The Assistant class (everything from session, wrapped up) ---
 class LifeAssistant:
-    def __init__(self, client, deployment, system_prompt, category_name):
+    def __init__(self, client, model, system_prompt, category_name):
         self.client = client
-        self.deployment = deployment
+        self.model = model
         self.category = category_name
         self.history = [{"role": "system", "content": system_prompt}]
         self.question_count = 0
@@ -98,9 +91,10 @@ class LifeAssistant:
         self.question_count += 1
 
         response_object = self.client.chat.completions.create(
-            model=self.deployment,
+            model=self.model,
             messages=self.history,
-            max_completion_tokens=4000
+            max_tokens=800,
+            temperature=0.7,
         )
 
         response = response_object.choices[0].message.content
@@ -111,7 +105,7 @@ class LifeAssistant:
 
 
 # --- Exit messages ---
-def get_farewell(client, deployment, category, question_count):
+def get_farewell(client, model, category, question_count):
     farewell_prompt = f"""The user just finished a {category} conversation ({question_count} questions).
 Give them a farewell that includes:
 1. A relevant shloka from Bhagavad Gita that connects to {category}:
@@ -126,9 +120,10 @@ Give them a farewell that includes:
 Keep it impactful."""
 
     response_object = client.chat.completions.create(
-        model=deployment,
+        model=model,
         messages=[{"role": "user", "content": farewell_prompt}],
-        max_completion_tokens=4000
+        max_tokens=400,
+        temperature=0.8,
     )
     return response_object.choices[0].message.content
 
@@ -139,7 +134,7 @@ Keep it impactful."""
 
 print("═" * 50)
 print("   🌟 YOUR PERSONAL LIFE ASSISTANT 🌟")
-print("   Built with Python + Azure OpenAI")
+print("   Built with Python + a local LLM")
 print("   (Everything you learned today, in action)")
 print("═" * 50)
 
@@ -159,7 +154,7 @@ print(f"\n✅ Loading: {selected['name']}")
 print(f"{'─' * 50}")
 print("Ask me anything! Type 'quit' when done.\n")
 
-assistant = LifeAssistant(client, deployment, selected["prompt"], selected["name"])
+assistant = LifeAssistant(client, model, selected["prompt"], selected["name"])
 
 while True:
     user_input = input("👤 You: ")
@@ -174,7 +169,7 @@ print("\n" + "═" * 50)
 print("   🙏 BEFORE YOU GO...")
 print("═" * 50 + "\n")
 
-farewell = get_farewell(client, deployment, selected["name"], assistant.question_count)
+farewell = get_farewell(client, model, selected["name"], assistant.question_count)
 print(farewell)
 
 print(f"\n{'─' * 50}")
