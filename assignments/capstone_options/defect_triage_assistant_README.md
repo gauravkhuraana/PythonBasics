@@ -18,7 +18,6 @@ This is the ⭐⭐⭐ capstone build of [Assignment 3's](../assignment_3_qa_agen
 ## Files
 
 - [`defect_triage_assistant.py`](defect_triage_assistant.py) — full version with interactive loop and class-based agent
-- [`defect_triage_assistant_short.py`](defect_triage_assistant_short.py) — minimal demo (~35 lines)
 
 ## Run it
 

@@ -1,10 +1,8 @@
 # Video 6 — Your First Python → Local LLM Program
 
-> **Duration:** 12–15 minutes · **Type:** Hands-on code
-
 ---
 
-## 🎯 What you'll build
+## What you'll build
 
 A 30-line Python script that sends a prompt to the LLM running inside LM Studio and prints the answer.
 
@@ -111,7 +109,7 @@ For local LLMs, "cost" = your CPU time. For cloud LLMs, it's $ — that's why ev
 
 ---
 
-## 🟢 Assignment 2 unlocks here
+## Assignment 2 unlocks here
 
 After this video you have everything needed for **Assignment 2 — Bug Report Generator**:
 [assignments/assignment_2_bug_report_generator/](assignments/assignment_2_bug_report_generator/)

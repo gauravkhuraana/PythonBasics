@@ -1,10 +1,8 @@
 # Video 5 — Run AI on Your Laptop with LM Studio
 
-> **Duration:** 10–12 minutes · **Type:** Tool walkthrough (no code)
-
 ---
 
-## 🎯 What you'll get from this video
+## What you'll get from this video
 
 - A **local LLM** running on your own machine — no cloud, no API key, no usage cost.
 - LM Studio's built-in **OpenAI-compatible server** running at `http://localhost:1234`.

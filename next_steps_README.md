@@ -1,7 +1,5 @@
 # Wrap-Up & Your Next Steps
 
-> **Duration:** 5–7 minutes · **Type:** Outro + capstone brief
-
 ---
 
 ## 🎉 What you've actually learned
@@ -52,7 +50,7 @@ In rough order of usefulness:
 
 ---
 
-## 📬 Stay in touch
+## Stay in touch
 
 - 🌐 **Website** — <https://gauravkhurana.com>
 - ⭐ **Star the repo** so you can find it later.

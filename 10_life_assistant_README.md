@@ -1,10 +1,8 @@
 # Video 10 — Build a Personal Life Assistant
 
-> **Duration:** 15–18 minutes · **Type:** Flagship hands-on build
-
 ---
 
-## 🎯 What you'll build
+## What you'll build
 
 A **menu-driven personal AI assistant** that runs entirely on your laptop:
 

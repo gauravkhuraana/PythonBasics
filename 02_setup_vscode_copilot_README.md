@@ -1,10 +1,8 @@
 # Video 2 — Setting Up Your AI Workshop
 
-> **Duration:** 8–10 minutes · **Type:** Install walkthrough
-
 ---
 
-## 🎯 What you'll get from this video
+## What you'll get from this video
 
 By the end you'll have:
 

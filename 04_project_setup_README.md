@@ -8,8 +8,6 @@ This module teaches professional Python project setup practices. There are no AI
 
 By the end of this module your environment will be fully configured and verified, ready for making Azure OpenAI API calls in the next module.
 
-**Duration:** ~10 minutes
-
 ---
 
 ### Prerequisites

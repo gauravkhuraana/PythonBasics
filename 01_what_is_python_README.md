@@ -1,10 +1,8 @@
 # Video 1 — Welcome & What is Python + AI
 
-> **Duration:** 5–7 minutes · **Type:** Concept (no code)
-
 ---
 
-## 🎯 What you'll get from this video
+## What you'll get from this video
 
 - Why this course exists and who it's for
 - A 30-second peek at the **final project** (a personal AI assistant running on your laptop)
@@ -14,7 +12,7 @@
 
 ---
 
-## 🎬 Course promise
+## Course promise
 
 By the end of this 11-video course you will:
 

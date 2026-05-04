@@ -1,10 +1,8 @@
 # Video 9 — Code Faster with GitHub Copilot
 
-> **Duration:** 8–10 minutes · **Type:** Demo (live coding)
-
 ---
 
-## 🎯 What you'll get from this video
+## What you'll get from this video
 
 - The **three Copilot surfaces** every Python+AI dev should know: inline, Chat, and slash commands.
 - Watch a real feature get added to the Life Assistant — using Copilot.
@@ -16,7 +14,7 @@
 
 ---
 
-## 🆓 Get GitHub Copilot Free — Sign Up & Activate
+## Get GitHub Copilot Free — Sign Up & Activate
 
 ### 1. Sign up (it's free)
 
@@ -47,7 +45,7 @@ Open VS Code → Extensions panel (`Ctrl+Shift+X`) → search and install both:
 
 ---
 
-## 🖥️ Connect Copilot Chat to a Local LM Studio Model
+## Connect Copilot Chat to a Local LM Studio Model
 
 Copilot Chat can use your local LM Studio model instead of (or in addition to) the cloud. This is 100% free, fully private, and has no monthly message cap.
 
@@ -69,14 +67,75 @@ Copilot Chat can use your local LM Studio model instead of (or in addition to) t
 
 ### Trade-offs
 
-| | Local (LM Studio) | Cloud (GitHub Copilot) |
-|---|---|---|
-| Cost | Free, unlimited | 50 messages/month on free tier |
-| Privacy | All traffic stays on your machine | Sent to GitHub/OpenAI |
-| Quality | Good for small tasks (3B–8B models) | Best-in-class (GPT-4o / Claude) |
-| Speed | Depends on your hardware | Fast, consistent |
+| | Local (LM Studio) | OpenRouter | Cloud (GitHub Copilot) |
+|---|---|---|---|
+| Cost | Free, unlimited | Free tier + pay-per-token | 50 messages/month on free tier |
+| Privacy | All traffic stays on your machine | Requests go to OpenRouter | Sent to GitHub/OpenAI |
+| Quality | Good for small tasks (3B–8B models) | 100+ models incl. GPT-4o / Claude | Best-in-class (GPT-4o / Claude) |
+| Speed | Depends on your hardware | Fast, consistent | Fast, consistent |
+| Internet | Not required | Required | Required |
 
 > 🧠 **Tip:** Use the local model for bulk tasks (generating lots of test cases, scaffolding repetitive code). Save your cloud messages for complex questions where quality really matters.
+
+---
+
+## 🌐 Use OpenRouter as an AI Backend
+
+[OpenRouter](https://openrouter.ai) gives you a **single OpenAI-compatible API** that routes to dozens of models — GPT-4o, Claude 3.5, Gemini, Llama 3, Mistral, and more — all through one endpoint and one API key.
+
+**Why it's useful for this course:** no model is locked behind a single provider, free-tier models are available, and the same `openai` Python client you already know works without changes.
+
+### Quick start
+
+1. Go to **<https://openrouter.ai>** and create a free account.
+2. Under **Keys**, generate an API key.
+3. Add it to your `.env` file:
+   ```
+   OPENROUTER_API_KEY=sk-or-...
+   OPENROUTER_MODEL=openai/gpt-4o-mini   # or any model slug from openrouter.ai/models
+   ```
+4. The companion script `openrouter.py` in this repo already shows the full pattern:
+
+```python
+from openai import OpenAI
+import os
+
+client = OpenAI(
+    base_url="https://openrouter.ai/api/v1",
+    api_key=os.getenv("OPENROUTER_API_KEY"),
+)
+
+response = client.chat.completions.create(
+    model=os.getenv("OPENROUTER_MODEL", "openai/gpt-4o-mini"),
+    messages=[{"role": "user", "content": "In 3 bullets: why is Python great for AI?"}],
+)
+print(response.choices[0].message.content)
+```
+
+### Connect OpenRouter to Copilot Chat
+
+You can point Copilot Chat at OpenRouter the same way you point it at LM Studio:
+
+1. Open Copilot Chat → model picker → **"Add OpenAI-compatible endpoint"**.
+2. Fill in:
+   ```
+   Base URL:  https://openrouter.ai/api/v1
+   API Key:   <your OPENROUTER_API_KEY>
+   Model ID:  openai/gpt-4o-mini   (or any slug from openrouter.ai/models)
+   ```
+3. Click **Save** and select the model.
+
+### How the three options compare
+
+| | LM Studio (local) | OpenRouter | GitHub Copilot (cloud) |
+|---|---|---|---|
+| Cost | Free, unlimited | Free tier + pay-per-token | 50 messages/month free |
+| Privacy | 100% local | Requests go to OpenRouter | Sent to GitHub/OpenAI |
+| Model choice | Whatever you downloaded | 100+ models, one API | GPT-4o / Claude (fixed) |
+| Setup | Install + download model | Account + API key | GitHub account |
+| Internet required | No | Yes | Yes |
+
+> 💡 **Best strategy:** prototype and bulk-generate with LM Studio, switch to OpenRouter when you need a specific model (e.g. Claude for nuanced reasoning), and keep Copilot Chat for pair-programming inside VS Code.
 
 ---
 
@@ -135,7 +194,7 @@ Steps shown on screen:
 
 ---
 
-## 🟢 Assignment 3 unlocks here
+## Assignment 3 unlocks here
 
 After this video, take **Assignment 3 — QA Agent**:
 [assignments/assignment_3_qa_agent/](assignments/assignment_3_qa_agent/)

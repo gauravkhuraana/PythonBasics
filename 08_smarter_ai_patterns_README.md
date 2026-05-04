@@ -1,10 +1,8 @@
 # Video 8 — Cloud, Debugging, and a Real Chat Loop
 
-> **Duration:** 12–15 minutes · **Type:** Concepts + hands-on
-
 ---
 
-## 🎯 What you'll learn
+## What you'll learn
 
 Three small, practical upgrades to what you built in Video 7:
 

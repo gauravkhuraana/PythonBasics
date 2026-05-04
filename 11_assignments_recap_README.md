@@ -1,10 +1,8 @@
 # Video 11 — Assignments: Key Concepts & Tips
 
-> **Duration:** 12–15 minutes · **Type:** Guided review + advice
-
 ---
 
-## 🎯 What this video covers
+## What this video covers
 
 A focused walkthrough of the **core concept** behind each assignment — what it's *really* testing, the one pattern you must get right, and the tips that separate a good solution from a great one.
 

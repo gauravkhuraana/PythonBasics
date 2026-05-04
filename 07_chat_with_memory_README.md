@@ -1,10 +1,8 @@
 # Video 7 — Multi-Turn Chat with Memory
 
-> **Duration:** 10–12 minutes · **Type:** Hands-on code
-
 ---
 
-## 🎯 What you'll learn
+## What you'll learn
 
 - The three message roles: `system`, `user`, `assistant`.
 - The "the model has no memory — *you* give it memory" pattern.

@@ -8,8 +8,6 @@ This is the foundation module of the training course. It introduces the core Pyt
 
 By the end of this module you will understand the exact data format Azure OpenAI expects when you send it a message.
 
-**Duration:** ~12 minutes
-
 ---
 
 ### What is Python?
