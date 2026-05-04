@@ -40,10 +40,10 @@ What Python is, how it runs, and just enough syntax to build with it. Examples a
 Pro project hygiene (`venv`, `.env`, `.gitignore`), getting a model running locally with LM Studio, and your first prompt → response in Python.
 
 ### Section 3 — Building conversational AI (Videos 7–9)
-Multi-turn chat (with a real test-run-summary example), system prompts, a class-based personal assistant, and shipping faster with GitHub Copilot.
+Multi-turn chat (with a real test-run-summary example), system prompts, OpenRouter for cloud fallback, debugging basics, and shipping faster with GitHub Copilot — including how to sign up for the free tier and connect it to a local LM Studio model.
 
-### Section 4 — Beyond local (Videos 10–11)
-Same code, swapped to Azure OpenAI in the cloud. Then a wrap-up and capstone brief.
+### Section 4 — Flagship build + assignments recap (Videos 10–11)
+Video 10 puts everything together in a menu-driven Personal Life Assistant with multiple AI personas. Video 11 walks through the key concept and must-know tip for each of the three assignments and the capstone.
 
 ---
 
@@ -97,10 +97,11 @@ PythonBasics/
 ├─ 05_lm_studio_README.md                 ← V5 tool walkthrough
 ├─ 06_first_local_ai_call.{py,_short.py,_README.md}
 ├─ 07_chat_with_memory.{py,_short.py,_README.md}
-├─ 08_life_assistant.{py,_short.py,_README.md}
-├─ 09_copilot_for_devs_README.md          ← V9 demo notes
-├─ 10_bonus_cloud_azure.{py,_short.py,_README.md}
-├─ 11_next_steps_README.md                ← Outro + capstone brief
+├─ 08_smarter_ai_patterns.{py,_short.py,_README.md}
+├─ 09_copilot_for_devs_README.md          ← V9 demo notes (GHCP + local model)
+├─ 10_life_assistant.{py,_short.py,_README.md}
+├─ 11_assignments_recap.{py,_short.py,_README.md}
+├─ next_steps_README.md                   ← Outro + capstone brief
 ├─ assignments/
 │   ├─ assignment_1_test_case_catalog/
 │   ├─ assignment_2_bug_report_generator/

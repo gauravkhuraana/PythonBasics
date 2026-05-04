@@ -1,4 +1,4 @@
-# Video 11 — Wrap-Up & Your Next Steps
+# Wrap-Up & Your Next Steps
 
 > **Duration:** 5–7 minutes · **Type:** Outro + capstone brief
 

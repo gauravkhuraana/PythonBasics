@@ -1,6 +1,6 @@
 """
 ================================================================
-08_life_assistant.py — Your Personal Life Assistant 🌟
+10_life_assistant.py — Your Personal Life Assistant 🌟
 THE FLAGSHIP: Everything from this course in one program.
 ================================================================
 
@@ -20,7 +20,7 @@ Prerequisites:
   - LM Studio running with a model loaded (Video 5)
   - .env has LOCAL_LLM_BASE_URL and LOCAL_LLM_MODEL
 
-Run this file:  python 08_life_assistant.py
+Run this file:  python 10_life_assistant.py
 ================================================================
 """
 

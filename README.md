@@ -29,12 +29,14 @@ By the end you will have built a real **Defect Triage Assistant** (or one of thr
 | 5 | Run AI on Your Laptop with LM Studio | 10–12 min | [README](05_lm_studio_README.md) |
 | 6 | Your First Python → Local LLM Program | 12–15 min | [Code](06_first_local_ai_call.py) · [Short](06_first_local_ai_call_short.py) · [README](06_first_local_ai_call_README.md) |
 | 7 | Multi-Turn Chat with Memory | 10–12 min | [Code](07_chat_with_memory.py) · [Short](07_chat_with_memory_short.py) · [README](07_chat_with_memory_README.md) |
-| 8 | **Build a Personal Life Assistant** | 15–18 min | [Code](08_life_assistant.py) · [Short](08_life_assistant_short.py) · [README](08_life_assistant_README.md) |
+| 8 | Smarter AI Patterns (OpenRouter, debugging, chat loop) | 12–15 min | [Code](08_smarter_ai_patterns.py) · [Short](08_smarter_ai_patterns_short.py) · [README](08_smarter_ai_patterns_README.md) |
 | 9 | Code Faster with GitHub Copilot | 8–10 min | [README](09_copilot_for_devs_README.md) |
-| 10 | Bonus: Connect to Cloud AI (Azure OpenAI) | 10–12 min | [Code](10_bonus_cloud_azure.py) · [Short](10_bonus_cloud_azure_short.py) · [README](10_bonus_cloud_azure_README.md) |
-| 11 | Wrap-Up & Your Next Steps | 5–7 min | [README](11_next_steps_README.md) |
+| 10 | **Build a Personal Life Assistant** | 15–18 min | [Code](10_life_assistant.py) · [Short](10_life_assistant_short.py) · [README](10_life_assistant_README.md) |
+| 11 | Assignments: Key Concepts & Tips | 12–15 min | [Code](11_assignments_recap.py) · [Short](11_assignments_recap_short.py) · [README](11_assignments_recap_README.md) |
 
 **Total runtime:** ~110–135 minutes.
+
+> After the videos: [Wrap-Up & Your Next Steps](next_steps_README.md) — capstone brief and where to go from here.
 
 ---
 

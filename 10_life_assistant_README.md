@@ -1,4 +1,4 @@
-# Video 8 — Build a Personal Life Assistant
+# Video 10 — Build a Personal Life Assistant
 
 > **Duration:** 15–18 minutes · **Type:** Flagship hands-on build
 
@@ -26,8 +26,8 @@ Pick a number (1-7):
 Each "mode" loads a different system prompt, giving you a different *expert* on the same chat engine. The conversation has memory across turns. When you `quit`, it sends you off with a thoughtful farewell.
 
 **Files for this video:**
-- [08_life_assistant.py](08_life_assistant.py) — full version with comments
-- [08_life_assistant_short.py](08_life_assistant_short.py) — minimal demo version
+- [10_life_assistant.py](10_life_assistant.py) — full version with comments
+- [10_life_assistant_short.py](10_life_assistant_short.py) — minimal demo version
 
 ---
 
@@ -83,14 +83,14 @@ Notice the constructor takes `client` and `model` as parameters:
 assistant = LifeAssistant(client, model, system_prompt, name)
 ```
 
-This is what makes Video 10 trivial — to switch from local to Azure, you build a different `client` at the top of the file. The assistant itself doesn't care.
+Because `client` is passed in, swapping providers (e.g. to a cloud model) only changes the top of the file. The assistant itself doesn't care.
 
 ---
 
 ## Try it yourself
 
 1. Make sure LM Studio is running (Video 5).
-2. `python 08_life_assistant.py`
+2. `python 10_life_assistant.py`
 3. Pick a category (start with 4 — Motivation, it's the most fun on small models).
 4. Ask 3-4 questions, watching how it remembers earlier context.
 5. Type `quit` and read the farewell.
@@ -107,4 +107,4 @@ We'll do something like the first one in Video 9 — using GitHub Copilot to wri
 
 ---
 
-Next: [Video 9](09_copilot_for_devs_README.md) — code faster with GitHub Copilot.
+Next: [Video 11](11_assignments_recap_README.md) — assignments key concepts & tips.

@@ -1,5 +1,5 @@
 """
-06_life_assistant_short.py - Your Personal Life Assistant 🌟
+10_life_assistant_short.py - Your Personal Life Assistant 🌟
 The Grand Finale: Everything from this session in one program
 """
 

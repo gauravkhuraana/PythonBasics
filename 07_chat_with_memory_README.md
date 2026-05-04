@@ -62,4 +62,4 @@ messages.append({"role": "assistant", "content": reply})
 
 ---
 
-Next: [Video 8](08_life_assistant_README.md) — wrap this pattern into a class and ship a real assistant.
+Next: [Video 8](08_smarter_ai_patterns_README.md) — OpenRouter, debugging basics, and a real chat loop.
