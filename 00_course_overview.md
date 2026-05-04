@@ -70,8 +70,8 @@ In Video 11 you pick **one** mini-project to extend and submit (or invent your o
 **Do I need prior coding experience?**
 No. Video 3 covers everything you need.
 
-**Do I need a paid Azure / OpenAI account?**
-No — the main path is fully local. Video 10 (cloud) is a bonus.
+**Do I need a paid OpenAI / cloud account?**
+No — the entire course runs locally on LM Studio. OpenRouter is mentioned as an optional alternative if you want access to bigger models.
 
 **My laptop is old. Will LM Studio work?**
 Probably yes with a 3B Q4 model. If responses are very slow, that's expected on CPU; outputs will still be coherent for learning.
@@ -80,7 +80,7 @@ Probably yes with a 3B Q4 model. If responses are very slow, that's expected on 
 Yes. Where commands differ, the README calls it out.
 
 **Will the code I write here scale to a real product?**
-The patterns will. The exact local LLM probably won't — but Video 10 shows you the swap.
+The patterns will. The same `OpenAI` client and message format work against any OpenAI-compatible endpoint — swap the `base_url` and you can move from LM Studio to a hosted provider.
 
 ---
 

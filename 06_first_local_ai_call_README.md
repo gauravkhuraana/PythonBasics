@@ -30,7 +30,7 @@ Your Python  ──►  http://localhost:1234/v1  ──►  Model running on yo
             (OpenAI SDK)         (LM Studio's OpenAI-compatible server)
 ```
 
-Because LM Studio speaks OpenAI's API format, **the same `openai` Python package** that talks to OpenAI/Azure can talk to your local server. You only change two things:
+Because LM Studio speaks OpenAI's API format, **the same `openai` Python package** that talks to OpenAI can talk to your local server. You only change two things:
 
 1. `base_url` → `http://localhost:1234/v1`
 2. `api_key` → any non-empty string (it's ignored locally)
@@ -60,7 +60,7 @@ from openai import OpenAI
 client = OpenAI(base_url=base_url, api_key="lm-studio")
 ```
 
-Note we use `OpenAI`, not `AzureOpenAI`. LM Studio is OpenAI-compatible, not Azure-flavoured.
+Note we use `OpenAI` — LM Studio is OpenAI-compatible.
 
 ### 3. Send a prompt
 

@@ -1,14 +1,11 @@
 # ============================================================
-# Python Dependencies for Azure OpenAI Session
+# Python Dependencies for Python + AI Course
 # ============================================================
 # Install with: pip install -r requirements.txt
 # ============================================================
 
-# OpenAI Python SDK - Works with both OpenAI and Azure OpenAI
+# OpenAI Python SDK — works with LM Studio, OpenRouter, OpenAI
 openai>=1.0.0
 
 # Load environment variables from .env file
 python-dotenv>=1.0.0
-
-# Azure AD authentication (token-based, no API key needed)
-azure-identity>=1.15.0

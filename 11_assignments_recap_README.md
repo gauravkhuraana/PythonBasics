@@ -98,7 +98,7 @@ Everything else (`.env` loading, client setup, printing) wraps these four lines.
 | Concept | Why it matters |
 |---------|---------------|
 | `python-dotenv` + `.env` | Never hard-code API keys or URLs in source code |
-| `OpenAI(base_url=..., api_key=...)` | Same client constructor works for LM Studio, OpenAI, Azure, OpenRouter — only the params change |
+| `OpenAI(base_url=..., api_key=...)` | Same client constructor works for LM Studio, OpenAI, OpenRouter — only the params change |
 | System prompt | Sets the *persona and output format* — write it in plain English first, then paste into code |
 | `response.choices[0].message.content` | The exact path to the model's reply — memorise this |
 

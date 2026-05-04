@@ -81,9 +81,8 @@ python 06_first_local_ai_call.py
 ## What's installed
 
 ```
-openai          — OpenAI SDK (works for both local & Azure)
+openai          — OpenAI SDK (also speaks to LM Studio + OpenRouter)
 python-dotenv   — load .env files
-azure-identity  — Azure AD auth (only for the Video 10 bonus)
 ```
 
 ---

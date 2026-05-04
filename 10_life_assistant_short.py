@@ -38,7 +38,7 @@ categories = {
         "name": "🤖 AI & Tech Learning",
         "prompt": """You are an AI learning mentor for software professionals.
 - Recommend practical learning paths (not just theory)
-- Focus on Azure AI, Python, LLMs, and prompt engineering
+- Focus on Python, LLMs, and prompt engineering
 - Suggest weekend projects and hands-on labs
 - Give honest career advice about AI skills that actually matter"""
     },
@@ -182,7 +182,7 @@ print(f"{'─' * 50}")
 print("""
 🎯 WHAT YOU JUST SAW (built in ~50 lines of logic):
    ✅ Python fundamentals — lists, dicts, classes, loops
-   ✅ Azure OpenAI — authentication, API calls
+   ✅ Local LLM via LM Studio — OpenAI-compatible API calls
    ✅ System prompts — personality per category
    ✅ Multi-turn memory — it remembered your conversation
    ✅ Class-based agent — clean, reusable structure

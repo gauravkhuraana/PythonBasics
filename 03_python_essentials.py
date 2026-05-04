@@ -137,11 +137,11 @@ print(f"   user_message['content'] = \"{user_message['content']}\"")
 
 
 print("\n" + "=" * 60)
-print("PART 4: COMBINING LISTS + DICTS (Azure OpenAI Format!)")
+print("PART 4: COMBINING LISTS + DICTS (LLM Chat Format!)")
 print("=" * 60)
 
 # ============================================================
-# THIS IS THE KEY PATTERN FOR AZURE OPENAI!
+# THIS IS THE KEY PATTERN FOR EVERY LLM CHAT API!
 # Messages = LIST of DICTIONARIES
 # ============================================================
 

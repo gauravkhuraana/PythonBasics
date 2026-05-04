@@ -40,7 +40,7 @@ OPENROUTER_API_KEY=sk-or-v1-...
 OPENROUTER_MODEL=openai/gpt-4o-mini
 ```
 
-The full file picks OpenRouter automatically when the key is set, else falls back to LM Studio. Same trick we'll use for Azure in Video 10.
+The full file picks OpenRouter automatically when the key is set, else falls back to LM Studio.
 
 ---
 

@@ -4,9 +4,9 @@
 
 ### Overview
 
-This is the foundation module of the training course. It introduces the core Python data types and data structures you will use in every Azure OpenAI API call. No Azure account or API access is needed for this module -- it is pure Python.
+This is the foundation module of the training course. It introduces the core Python data types and data structures you will use in every LLM API call. No API key or cloud account is needed for this module -- it is pure Python.
 
-By the end of this module you will understand the exact data format Azure OpenAI expects when you send it a message.
+By the end of this module you will understand the exact data format the LLM expects when you send it a message.
 
 ---
 
@@ -45,7 +45,7 @@ Nearly every major AI framework and library is written in Python or has Python a
 
 | Library/Framework | Purpose |
 |-------------------|---------|
-| **OpenAI SDK** | The official client for GPT models and Azure OpenAI (what we use in this course) |
+| **OpenAI SDK** | The official client for GPT models, OpenAI-compatible servers, and any LLM (what we use in this course) |
 | **TensorFlow** | Google's deep learning framework |
 | **PyTorch** | Meta's deep learning framework (dominant in research) |
 | **scikit-learn** | Classical machine learning (classification, regression, clustering) |
@@ -104,11 +104,11 @@ The code you write in this training session uses the same language, libraries, a
 
 ### Python in This Course
 
-In this course, Python serves as the bridge between you and Azure OpenAI. You will use Python to:
+In this course, Python serves as the bridge between you and the LLM. You will use Python to:
 
 1. **Structure data** -- format prompts and messages using lists and dictionaries (this module)
 2. **Manage secrets** -- load API keys securely from `.env` files (Module 2)
-3. **Call APIs** -- send requests to Azure OpenAI and parse responses (Modules 3-4)
+3. **Call APIs** -- send requests to the LLM and parse responses (Modules 3-4)
 4. **Build agents** -- create intelligent assistants with memory and personality (Module 5)
 
 You do not need to be a Python expert. The subset of Python used in this course is small and focused: variables, data types, lists, dictionaries, and function calls. That is enough to build a fully functional AI Meeting Assistant.
@@ -119,7 +119,7 @@ You do not need to be a Python expert. The subset of Python used in this course 
 
 - Python 3.10+ installed
 - VS Code with the Python extension
-- No Azure credentials needed for this module
+- No API credentials needed for this module
 
 ---
 
@@ -158,7 +158,7 @@ assistant_name = "Meeting Assistant"
   print(f"prompt = \"{prompt}\"")
   ```
 
-**AI connection:** Every prompt you send to Azure OpenAI is a string. Every response you receive back is also a string.
+**AI connection:** Every prompt you send to the LLM is a string. Every response you receive back is also a string.
 
 ---
 
@@ -171,7 +171,7 @@ max_tokens = 500      # Maximum length of AI response
 message_count = 3
 ```
 
-**AI connection:** The `max_tokens` parameter tells Azure OpenAI the maximum number of tokens (roughly words) the response can contain. This directly affects cost.
+**AI connection:** The `max_tokens` parameter tells the LLM the maximum number of tokens (roughly words) the response can contain. This directly affects cost.
 
 ---
 
@@ -267,13 +267,13 @@ user_message["role"]       # Returns: "user"
 user_message["content"]    # Returns: "Please summarize my meeting notes"
 ```
 
-**AI connection:** Each individual message sent to Azure OpenAI is structured as a dictionary with two keys: `"role"` (who is speaking) and `"content"` (what they are saying).
+**AI connection:** Each individual message sent to the LLM is structured as a dictionary with two keys: `"role"` (who is speaking) and `"content"` (what they are saying).
 
 ---
 
-#### 8. The Azure OpenAI Message Format -- Lists + Dictionaries Combined
+#### 8. The LLM Message Format -- Lists + Dictionaries Combined
 
-This is the most important pattern in the entire course. Azure OpenAI expects messages as a **list of dictionaries**, where each dictionary has a `"role"` and `"content"` key.
+This is the most important pattern in the entire course. the LLM expects messages as a **list of dictionaries**, where each dictionary has a `"role"` and `"content"` key.
 
 ```python
 conversation = [
@@ -305,7 +305,7 @@ The file is organized into 4 parts:
 | Part 1 | Variables and Data Types | `str`, `int`, `float`, `bool` with print statements showing each type |
 | Part 2 | Lists | Creating an empty list, appending items, indexing, and looping |
 | Part 3 | Dictionaries | Creating a message dictionary, accessing values by key |
-| Part 4 | Combining Lists + Dicts | The Azure OpenAI message format -- a list of dictionaries with role/content |
+| Part 4 | Combining Lists + Dicts | The LLM message format -- a list of dictionaries with role/content |
 
 Run the file to see all examples in action:
 
@@ -323,7 +323,7 @@ python 03_python_essentials.py
 4. `bool` -- True/False settings and flags
 5. `list` -- Ordered collection using `[ ]`
 6. `dict` -- Key-value pairs using `{ }`
-7. **Most important for Azure OpenAI:** Messages are a **list of dictionaries** -- `[{"role": "...", "content": "..."}, ...]`
+7. **Most important for the LLM:** Messages are a **list of dictionaries** -- `[{"role": "...", "content": "..."}, ...]`
 
 ---
 

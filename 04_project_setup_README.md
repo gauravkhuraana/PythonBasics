@@ -6,7 +6,7 @@
 
 This module teaches professional Python project setup practices. There are no AI API calls here -- instead you will learn how to isolate your project's dependencies, store secrets securely, and protect sensitive information from being accidentally published. These are industry-standard practices used in every professional Python project.
 
-By the end of this module your environment will be fully configured and verified, ready for making Azure OpenAI API calls in the next module.
+By the end of this module your environment will be fully configured and verified, ready for making LLM API calls in the next module.
 
 ---
 
@@ -66,7 +66,7 @@ A `.env` file is a plain-text configuration file that stores secrets as `KEY=VAL
 api_key = "sk-abc123secretkey456"
 
 # GOOD -- secret is loaded from .env file
-api_key = os.getenv("AZURE_OPENAI_API_KEY")
+api_key = os.getenv("OPENROUTER_API_KEY")
 ```
 
 If you hardcode secrets in your source code and push to GitHub, hackers can find and exploit them within minutes.
@@ -74,9 +74,12 @@ If you hardcode secrets in your source code and push to GitHub, hackers can find
 **Your `.env` file format:**
 
 ```
-AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
-AZURE_OPENAI_API_KEY=your-secret-key-here
-AZURE_OPENAI_DEPLOYMENT_NAME=gpt-4o
+LOCAL_LLM_BASE_URL=http://localhost:1234/v1
+LOCAL_LLM_MODEL=lmstudio-community/Meta-Llama-3-8B-Instruct-GGUF
+
+# Optional, only if you want to use OpenRouter (Video 8)
+OPENROUTER_API_KEY=sk-or-...
+OPENROUTER_MODEL=openai/gpt-4o-mini
 ```
 
 **Important rules:**
@@ -100,9 +103,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Retrieve individual values
-endpoint = os.getenv("AZURE_OPENAI_ENDPOINT")
-api_key = os.getenv("AZURE_OPENAI_API_KEY")
-deployment = os.getenv("AZURE_OPENAI_DEPLOYMENT_NAME")
+base_url = os.getenv("LOCAL_LLM_BASE_URL")
+model    = os.getenv("LOCAL_LLM_MODEL")
 ```
 
 **How it works step by step:**
@@ -137,7 +139,7 @@ __pycache__/
 1. You accidentally commit `.env` to Git
 2. You push to GitHub -- your API key is now **public**
 3. Hackers run automated scanners that find exposed keys within minutes
-4. Your Azure bill skyrockets as attackers use your credits
+4. Your API bill skyrockets as attackers use your credits
 
 **Always verify before committing:** Run `git status` and make sure `.env` is NOT listed in the output.
 
@@ -148,14 +150,14 @@ __pycache__/
 The file includes a validation section that checks whether all three required credentials loaded correctly. This is a simple pattern you can reuse in any project:
 
 ```python
-if endpoint:
-    print("AZURE_OPENAI_ENDPOINT: Loaded")
+if base_url:
+    print("LOCAL_LLM_BASE_URL: Loaded")
 else:
-    print("AZURE_OPENAI_ENDPOINT: Not found!")
+    print("LOCAL_LLM_BASE_URL: Not found!")
 ```
 
 The health check:
-- Verifies each of the 3 required variables (`AZURE_OPENAI_ENDPOINT`, `AZURE_OPENAI_API_KEY`, `AZURE_OPENAI_DEPLOYMENT_NAME`)
+- Verifies the required variables (`LOCAL_LLM_BASE_URL`, `LOCAL_LLM_MODEL`) and reports any optional ones (`OPENROUTER_*`)
 - Shows masked values for security (e.g., `abcd...wxyz` instead of the full key)
 - Reports a pass/fail summary (`3/3 checks passed` or tells you what to fix)
 
@@ -225,4 +227,4 @@ print(f"Hello, {my_name}! Your custom variable works!")
 
 ### What's Next
 
-In **Module 3 (`06_first_local_ai_call.py`)** you will use these loaded variables to create an OpenAI-compatible client pointed at LM Studio and make your very first call to a local AI model. You will send a prompt and receive an AI-generated response — all running on your laptop. (A bonus Module 10 covers the same thing against Azure OpenAI in the cloud.)
+In **Module 3 (`06_first_local_ai_call.py`)** you will use these loaded variables to create an OpenAI-compatible client pointed at LM Studio and make your very first call to a local AI model. You will send a prompt and receive an AI-generated response — all running on your laptop.

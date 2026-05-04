@@ -73,7 +73,7 @@ Three ways you'll run code in this course:
 | 7 | Multi-Turn Chat with Memory | System prompts + conversation history |
 | 8 | Build a Personal Life Assistant | **Flagship hands-on build** |
 | 9 | Code Faster with GitHub Copilot | Inline + Chat + /explain + /fix |
-| 10 | Bonus: Connect to Cloud AI | Same code, swap to Azure OpenAI |
+| 10 | Build a Personal Life Assistant | Menu-driven multi-persona chat on your local LLM |
 | 11 | Wrap-Up & Your Next Steps | Pick a capstone, learn what's next |
 
 ---

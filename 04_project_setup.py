@@ -72,7 +72,7 @@ NEVER put secrets directly in your code!
    api_key = "sk-abc123secretkey456"
    
    ✅ GOOD (secret in .env file):
-   api_key = os.getenv("AZURE_OPENAI_API_KEY")
+   api_key = os.getenv("OPENROUTER_API_KEY")
 
 HOW IT WORKS:
    1. Create a file named: .env (just ".env", no other name)
@@ -81,10 +81,13 @@ HOW IT WORKS:
    4. Access with os.getenv("KEY_NAME")
 
 YOUR .env FILE SHOULD LOOK LIKE:
-   
-   AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
-   AZURE_OPENAI_API_KEY=your-secret-key-here
-   AZURE_OPENAI_DEPLOYMENT_NAME=gpt-4o
+
+   LOCAL_LLM_BASE_URL=http://localhost:1234/v1
+   LOCAL_LLM_MODEL=lmstudio-community/Meta-Llama-3-8B-Instruct-GGUF
+
+   # Optional, only if you want to use OpenRouter (Video 8)
+   OPENROUTER_API_KEY=sk-or-...
+   OPENROUTER_MODEL=openai/gpt-4o-mini
 """)
 
 
@@ -104,13 +107,11 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Now retrieve your config safely.
-# For Videos 6-9 we use the LOCAL_* variables (LM Studio).
-# AZURE_* are only needed for the bonus Video 10.
+# This course uses LOCAL_LLM_* (LM Studio) and optionally OPENROUTER_* (Video 8).
 base_url = os.getenv("LOCAL_LLM_BASE_URL")
 model    = os.getenv("LOCAL_LLM_MODEL")
-endpoint = os.getenv("AZURE_OPENAI_ENDPOINT")
-api_key = os.getenv("AZURE_OPENAI_API_KEY")
-deployment = os.getenv("AZURE_OPENAI_DEPLOYMENT_NAME")
+openrouter_key   = os.getenv("OPENROUTER_API_KEY")
+openrouter_model = os.getenv("OPENROUTER_MODEL")
 
 print("""
 📝 CODE TO LOAD CONFIG:
@@ -124,9 +125,9 @@ print("""
    base_url = os.getenv("LOCAL_LLM_BASE_URL")
    model    = os.getenv("LOCAL_LLM_MODEL")
 
-   # Azure OpenAI — only used in the Video 10 bonus
-   endpoint   = os.getenv("AZURE_OPENAI_ENDPOINT")
-   deployment = os.getenv("AZURE_OPENAI_DEPLOYMENT_NAME")
+   # OpenRouter — optional, used in Video 8
+   openrouter_key   = os.getenv("OPENROUTER_API_KEY")
+   openrouter_model = os.getenv("OPENROUTER_MODEL")
 """)
 
 
@@ -156,7 +157,7 @@ WHAT HAPPENS WITHOUT .gitignore?
    ❌ You accidentally commit .env
    ❌ Your API key is now PUBLIC on GitHub
    ❌ Hackers find it within minutes (they scan for this!)
-   ❌ Your Azure bill goes through the roof 💸
+   ❌ Your API bill goes through the roof 💸
 
 ALWAYS CHECK before committing:
    git status  # Make sure .env is NOT listed!
@@ -186,15 +187,14 @@ else:
     print("   ❌ LOCAL_LLM_MODEL not set — see Video 5 for where to find it")
     local_ok = False
 
-print("\n   --- Azure OpenAI (only for Video 10 bonus) ---")
-for name, val in (("AZURE_OPENAI_ENDPOINT", endpoint),
-                  ("AZURE_OPENAI_API_KEY", api_key),
-                  ("AZURE_OPENAI_DEPLOYMENT_NAME", deployment)):
+print("\n   --- OpenRouter (optional, only for Video 8) ---")
+for name, val in (("OPENROUTER_API_KEY", openrouter_key),
+                  ("OPENROUTER_MODEL", openrouter_model)):
     if val:
-        masked = val[:6] + "…" if name == "AZURE_OPENAI_API_KEY" and len(val) > 6 else val
+        masked = val[:6] + "…" if name == "OPENROUTER_API_KEY" and len(val) > 6 else val
         print(f"   ✅ {name}: {masked}")
     else:
-        print(f"   ⚪ {name}: not set (skip if you're not doing Video 10)")
+        print(f"   ⚪ {name}: not set (skip if you only use LM Studio)")
 
 print("\n" + "-" * 40)
 if local_ok:
