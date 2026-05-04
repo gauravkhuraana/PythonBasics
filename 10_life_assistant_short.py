@@ -10,10 +10,10 @@ from openai import OpenAI
 load_dotenv()
 
 client = OpenAI(
-    base_url=os.getenv("LOCAL_LLM_BASE_URL", "http://localhost:1234/v1"),
-    api_key="lm-studio",  # local server ignores the value
+    base_url="https://openrouter.ai/api/v1",
+    api_key=os.getenv("OPENROUTER_API_KEY"),
 )
-model = os.getenv("LOCAL_LLM_MODEL", "local-model")
+model = "gpt-4o-mini"
 
 
 # --- Life categories with expert system prompts ---
