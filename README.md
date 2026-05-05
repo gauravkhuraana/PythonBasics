@@ -46,7 +46,7 @@ Three graded assignments unlock as you progress:
 
 A bonus capstone — the [Defect Triage Assistant](assignments/capstone_options/) — is also available for those who want a fourth project with a real interactive loop.
 
-Solutions live in `solutions/` (gitignored on this branch — request them if you're stuck).
+Reference solutions live in [`solutions/`](solutions/) — try each assignment yourself first, then compare.
 
 ---
 

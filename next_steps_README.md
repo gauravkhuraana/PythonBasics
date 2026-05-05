@@ -45,8 +45,13 @@ In rough order of usefulness:
 2. **RAG (Retrieval-Augmented Generation)** — feed the LLM your own documents. Try [LlamaIndex](https://www.llamaindex.ai/) or [LangChain](https://www.langchain.com/).
 3. **Streaming responses** — make the UI feel snappy: `stream=True` on chat completions.
 4. **A web UI** — wrap your assistant in [Streamlit](https://streamlit.io/) or [Gradio](https://www.gradio.app/) (~50 extra lines).
-5. **Better local models** — try `ollama`, `llama.cpp`, or quantized 7B/8B models when your hardware allows.
-6. **Agent frameworks** — when you're ready: LangGraph, Microsoft Agent Framework, OpenAI Agents SDK.
+5. **Better local models** — try [Ollama](https://ollama.com/), [llama.cpp](https://github.com/ggml-org/llama.cpp), or quantized 7B/8B models (Llama 3.2, Qwen 2.5, Phi-4, Gemma 3) when your hardware allows.
+6. **Agent frameworks** — when you're ready:
+   - [Microsoft Agent Framework](https://github.com/microsoft/agent-framework) — the unified successor to Semantic Kernel + AutoGen
+   - [OpenAI Agents SDK](https://github.com/openai/openai-agents-python) — lightweight, multi-agent handoffs
+   - [LangGraph](https://github.com/langchain-ai/langgraph) — graph-based stateful agents
+   - [Pydantic AI](https://ai.pydantic.dev/) — type-safe agent building
+7. **Model Context Protocol (MCP)** — the emerging standard for connecting LLMs to tools and data. See [modelcontextprotocol.io](https://modelcontextprotocol.io/).
 
 ---
 

@@ -42,9 +42,10 @@ Inside LM Studio:
 
 1. Click the **Search / Discover** icon (magnifying glass).
 2. Search for one of these beginner-friendly models (any will work):
-   - `Llama 3.2 3B Instruct` (~2 GB)
-   - `Phi-3 mini Instruct` (~2 GB)
-   - `Qwen2.5 3B Instruct` (~2 GB)
+   - `Llama 3.2 3B Instruct` (~2 GB) — reliable starter
+   - `Qwen2.5 3B Instruct` (~2 GB) — strong reasoning for its size
+   - `Phi-4 mini Instruct` (~2.5 GB) — Microsoft's 2025 small model
+   - `Gemma 3 4B Instruct` (~3 GB) — Google's 2025 release, multilingual
 3. Pick a **Q4** or **Q5** quantization (smaller, faster, fine for learning).
 4. Click **Download**.
 
@@ -98,7 +99,7 @@ In the LM Studio Server tab, look at the model identifier — something like:
 lmstudio-community/Llama-3.2-3B-Instruct-GGUF
 ```
 
-Or simply `llama-3.2-3b-instruct`. **Copy it** — we'll put it in `.env` in Video 6.
+Or simply `llama-3.2-3b-instruct` / `qwen2.5-3b-instruct` / `phi-4-mini-instruct`. **Copy it** — we'll put it in `.env` in Video 6.
 
 ---
 
