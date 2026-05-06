@@ -33,7 +33,7 @@ Take what you built in Video 8 and one of the assignments and ship it as a small
 - The code is in a public GitHub repo with a README.
 - You've recorded a 60-second screen recording of it working.
 
-Submit your repo link via the Topmate link in the course description for a 1:1 review.
+Submit your repo link via [Topmate](https://topmate.io/gauravkhurana) for a 1:1 review.
 
 ---
 
@@ -59,8 +59,8 @@ In rough order of usefulness:
 
 - 🌐 **Website** — <https://gauravkhurana.com>
 - ⭐ **Star the repo** so you can find it later.
-- 💬 **Topmate** — book a 1:1 if you want feedback on your capstone.
-- 🎥 **Udemy reviews** — they help more than you think; please leave one if this course was useful.
+- 💬 **Topmate** — book a 1:1 if you want feedback on your capstone: <https://topmate.io/gauravkhurana>
+- 🎥 **Udemy** — find the course here and please leave a review if it was useful: <https://www.udemy.com/course/learn-api-testing-concepts-with-interview-question-answers/?couponCode=6B648114581356DBE639>
 
 ---
 

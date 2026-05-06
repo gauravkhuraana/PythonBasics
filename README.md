@@ -99,8 +99,8 @@ python-dotenv   — load .env files
 ## Connect
 
 - Website: <https://gauravkhurana.com>
-- Find this course on Udemy: *(link in course description)*
-- Topmate for 1:1 review of your capstone: *(link in course description)*
+- Find this course on Udemy: <https://www.udemy.com/course/learn-api-testing-concepts-with-interview-question-answers/?couponCode=6B648114581356DBE639>
+- Topmate for 1:1 review of your capstone: <https://topmate.io/gauravkhurana>
 - If this helped you, star the repo so you can find it later.
 
 ---
