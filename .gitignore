@@ -55,9 +55,3 @@ build/
 dist/
 *.egg-info/
 
-# ------------------------------------------------------------
-# LAB SOLUTIONS - Instructor only, not for students
-# ------------------------------------------------------------
-solutions/
-build_deck.py
-07_presentation_instructions.md
